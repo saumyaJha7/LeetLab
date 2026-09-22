@@ -1,12 +1,70 @@
 import {
+  ActivityIndicator,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { useState } from "react";
+import { router } from "expo-router";
+import type { RelativePathString } from "expo-router";
+import { supabase } from "../../lib/supabase";
 
 export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"error" | "success">("error");
+
+  const handleLogin = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    setMessage(null);
+
+    if (!normalizedEmail || !password) {
+      setMessage("Enter your email and password.");
+      setMessageType("error");
+      return;
+    }
+
+    setIsLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
+    });
+    setIsLoading(false);
+
+    if (error) {
+      setMessage(error.message);
+      setMessageType("error");
+      return;
+    }
+
+    router.replace("/(tabs)");
+  };
+
+  const handleForgotPassword = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    setMessage(null);
+
+    if (!normalizedEmail) {
+      setMessage("Enter your email first, then tap Forgot password.");
+      setMessageType("error");
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail);
+    if (error) {
+      setMessage(error.message);
+      setMessageType("error");
+      return;
+    }
+
+    setMessage("Password reset instructions are on their way.");
+    setMessageType("success");
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -23,6 +81,10 @@ export default function LoginScreen() {
               placeholderTextColor="#777"
               keyboardType="email-address"
               autoCapitalize="none"
+              autoCorrect={false}
+              value={email}
+              onChangeText={setEmail}
+              editable={!isLoading}
               style={styles.input}
             />
           </View>
@@ -33,13 +95,16 @@ export default function LoginScreen() {
               placeholder="Enter your password"
               placeholderTextColor="#777"
               secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+              editable={!isLoading}
               style={styles.input}
             />
           </View>
 
           <Pressable
             accessibilityRole="button"
-            onPress={() => {}}
+            onPress={handleForgotPassword}
             style={styles.forgotPassword}
           >
             {({ pressed }) => (
@@ -56,15 +121,34 @@ export default function LoginScreen() {
 
           <Pressable
             accessibilityRole="button"
-            onPress={() => {}}
+            onPress={handleLogin}
+            disabled={isLoading}
             style={({ pressed }) => [
               styles.loginButton,
               pressed && styles.loginButtonPressed,
+              isLoading && styles.loginButtonDisabled,
             ]}
           >
-            <Text style={styles.loginButtonText}>Login</Text>
+            {isLoading ? (
+              <ActivityIndicator color="#000000" />
+            ) : (
+              <Text style={styles.loginButtonText}>Login</Text>
+            )}
           </Pressable>
         </View>
+
+        {message ? (
+          <Text
+            accessibilityRole="alert"
+            style={
+              messageType === "success"
+                ? styles.successMessage
+                : styles.errorMessage
+            }
+          >
+            {message}
+          </Text>
+        ) : null}
 
         <View style={styles.dividerContainer}>
           <View style={styles.divider} />
@@ -74,7 +158,7 @@ export default function LoginScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => {}}
+          onPress={() => setMessage("Google sign-in is not configured yet.")}
           style={({ pressed }) => [
             styles.googleButton,
             pressed && styles.googleButtonPressed,
@@ -92,7 +176,7 @@ export default function LoginScreen() {
 
           <Pressable
             accessibilityRole="button"
-            onPress={() => {}}
+            onPress={() => router.replace("/signup" as RelativePathString)}
             style={styles.signupLinkButton}
           >
             {({ pressed }) => (
@@ -192,6 +276,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#D6D6D6",
   },
 
+  loginButtonDisabled: {
+    backgroundColor: "#AAAAAA",
+  },
+
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -229,6 +317,20 @@ const styles = StyleSheet.create({
   googleButtonPressed: {
     backgroundColor: "#242424",
     borderColor: "#666666",
+  },
+
+  errorMessage: {
+    color: "#FF8F8F",
+    fontSize: 13,
+    lineHeight: 19,
+    marginTop: 16,
+  },
+
+  successMessage: {
+    color: "#8FE0A8",
+    fontSize: 13,
+    lineHeight: 19,
+    marginTop: 16,
   },
 
   signupContainer: {
