@@ -6,102 +6,78 @@ import {
   View,
 } from "react-native";
 
-export default function LoginScreen() {
+export default function SignupScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome back</Text>
+        <Text style={styles.title}>Create account</Text>
+
         <Text style={styles.subtitle}>
-          Login to continue solving problems.
+          Create your account and start solving problems.
         </Text>
 
         <View style={styles.form}>
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email</Text>
+
             <TextInput
               placeholder="Enter your email"
               placeholderTextColor="#777"
               keyboardType="email-address"
               autoCapitalize="none"
+              autoCorrect={false}
               style={styles.input}
             />
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
+
             <TextInput
-              placeholder="Enter your password"
+              placeholder="Create a password"
               placeholderTextColor="#777"
               secureTextEntry
               style={styles.input}
             />
           </View>
 
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => {}}
-            style={styles.forgotPassword}
-          >
-            {({ pressed }) => (
-              <Text
-                style={[
-                  styles.forgotPasswordText,
-                  pressed && styles.pressedLinkText,
-                ]}
-              >
-                Forgot password?
-              </Text>
-            )}
-          </Pressable>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Confirm password</Text>
 
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => {}}
-            style={({ pressed }) => [
-              styles.loginButton,
-              pressed && styles.loginButtonPressed,
-            ]}
-          >
-            <Text style={styles.loginButtonText}>Login</Text>
+            <TextInput
+              placeholder="Confirm your password"
+              placeholderTextColor="#777"
+              secureTextEntry
+              style={styles.input}
+            />
+          </View>
+
+          <Pressable style={styles.signupButton}>
+            <Text style={styles.signupButtonText}>Create account</Text>
           </Pressable>
         </View>
 
         <View style={styles.dividerContainer}>
           <View style={styles.divider} />
+
           <Text style={styles.orText}>OR</Text>
+
           <View style={styles.divider} />
         </View>
 
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => {}}
-          style={({ pressed }) => [
-            styles.googleButton,
-            pressed && styles.googleButtonPressed,
-          ]}
-        >
+        <Pressable style={styles.googleButton}>
           <Text style={styles.googleButtonText}>
             Continue with Google
           </Text>
         </Pressable>
 
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>
-            Don&apos;t have an account?
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginText}>
+            Already have an account?
           </Text>
 
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => {}}
-            style={styles.signupLinkButton}
-          >
-            {({ pressed }) => (
-              <Text
-                style={[styles.signupLink, pressed && styles.pressedLink]}
-              >
-                Sign up
-              </Text>
-            )}
+          <Pressable>
+            <Text style={styles.loginLink}> Login</Text>
           </Pressable>
         </View>
       </View>
@@ -159,21 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 
-  forgotPassword: {
-    alignSelf: "flex-end",
-    marginTop: -6,
-  },
-
-  forgotPasswordText: {
-    color: "#888888",
-    fontSize: 13,
-  },
-
-  pressedLinkText: {
-    color: "#FFFFFF",
-  },
-
-  loginButton: {
+  signupButton: {
     height: 52,
     borderRadius: 10,
     backgroundColor: "#FFFFFF",
@@ -182,14 +144,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
-  loginButtonText: {
+  signupButtonText: {
     color: "#000000",
     fontSize: 16,
     fontWeight: "600",
-  },
-
-  loginButtonPressed: {
-    backgroundColor: "#D6D6D6",
   },
 
   dividerContainer: {
@@ -226,33 +184,20 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
 
-  googleButtonPressed: {
-    backgroundColor: "#242424",
-    borderColor: "#666666",
-  },
-
-  signupContainer: {
+  loginContainer: {
     flexDirection: "row",
     justifyContent: "center",
     marginTop: 28,
   },
 
-  signupText: {
+  loginText: {
     color: "#777777",
     fontSize: 14,
   },
 
-  signupLink: {
+  loginLink: {
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
-  },
-
-  signupLinkButton: {
-    marginLeft: 4,
-  },
-
-  pressedLink: {
-    color: "#AAAAAA",
   },
 });
