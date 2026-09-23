@@ -28,7 +28,7 @@ export default function TabsLayout() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!isMounted) return;
 
       const hasSession = !!session;

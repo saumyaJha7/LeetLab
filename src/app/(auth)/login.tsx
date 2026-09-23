@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import { router } from "expo-router";
-import type { RelativePathString } from "expo-router";
 import { supabase } from "../../lib/supabase";
 
 export default function LoginScreen() {
