@@ -41,10 +41,15 @@ export default function SignupScreen() {
     }
 
     setIsLoading(true);
+
     const { data, error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,
+      options: {
+        emailRedirectTo: undefined,
+      },
     });
+
     setIsLoading(false);
 
     if (error) {
@@ -52,10 +57,18 @@ export default function SignupScreen() {
       return;
     }
 
-    if (!data.session) {
-      setSuccessMessage(
-        "Account created. Check your email to verify your account, then log in."
-      );
+    if (!data.user) {
+      setErrorMessage("Sign up failed. Please try again.");
+      return;
+    }
+
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      setErrorMessage("Account created, but the session could not be initialized.");
       return;
     }
 

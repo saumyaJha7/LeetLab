@@ -206,7 +206,7 @@ export default function LoginScreen() {
           <Text style={styles.signupText}>New to LeetLab?</Text>
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.replace("/signup" as RelativePathString)}
+            onPress={() => router.replace("/(auth)/signup")}
             style={styles.signupLinkButton}
           >
             {({ pressed }) => (
