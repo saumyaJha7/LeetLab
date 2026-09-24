@@ -3,6 +3,10 @@
 # dependencies
 node_modules/
 
+# warning from github
+google-services.json
+GoogleService-Info.plist
+
 # Expo
 .expo/
 dist/
