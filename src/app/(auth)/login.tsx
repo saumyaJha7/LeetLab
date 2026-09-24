@@ -9,6 +9,15 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { supabase } from "../../lib/supabase";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+});
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -42,6 +51,43 @@ export default function LoginScreen() {
     }
 
     router.replace("/(tabs)");
+  };
+
+  const handleGoogleLogin = async () => {
+    setMessage(null);
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      
+      if (isSuccessResponse(response)) {
+        setIsLoading(true);
+        const { data, error } = await supabase.auth.signInWithIdToken({
+          provider: 'google',
+          token: response.data.idToken as string,
+        });
+        
+        setIsLoading(false);
+        if (error) {
+          setMessage(error.message);
+          setMessageType("error");
+        } else {
+          router.replace("/(tabs)");
+        }
+      }
+    } catch (error: any) {
+      setIsLoading(false);
+      if (error.code === statusCodes.IN_PROGRESS) {
+        setMessage("Sign in is in progress.");
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        setMessage("Play services not available or outdated.");
+      } else if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // User cancelled the login flow
+        setMessage("Google Sign-In was cancelled by user.");
+      } else {
+        setMessage("An error occurred during Google Sign-In.");
+      }
+      setMessageType("error");
+    }
   };
 
   const handleForgotPassword = async () => {
@@ -189,7 +235,8 @@ export default function LoginScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => setMessage("Google sign-in is not configured yet.")}
+          disabled={isLoading}
+          onPress={handleGoogleLogin}
           style={({ pressed }) => [
             styles.googleButton,
             pressed && styles.googleButtonPressed,

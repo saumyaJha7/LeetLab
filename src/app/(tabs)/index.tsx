@@ -1,7 +1,9 @@
 import { Text, View, StyleSheet, Pressable } from "react-native";
 import { Link } from "expo-router";
 
+
 export default function HomeScreen() {
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home Screen</Text>
@@ -9,7 +11,7 @@ export default function HomeScreen() {
       <View style={styles.floatingContainer}>
         <Link href="/(tabs)/problems" asChild>
           <Pressable style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}>
-            <Text style={styles.buttonText}>prblm</Text>
+            <Text style={styles.buttonText}>problem</Text>
           </Pressable>
         </Link>
         <Link href="/(tabs)/profile" asChild>
@@ -21,6 +23,9 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+const CYAN_COLOR = "#4CB1F7";
+const LIGHT_CYAN = "#E6F4FE";
 
 const styles = StyleSheet.create({
   container: {
@@ -42,28 +47,27 @@ const styles = StyleSheet.create({
     bottom: 60,
     flexDirection: "row",
     gap: 16,
+    padding: 16,
+    backgroundColor: LIGHT_CYAN,
+    borderWidth: 4,
+    borderColor: CYAN_COLOR,
+    borderRadius: 16,
   },
   button: {
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
     backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: "#EAEAEA",
+    borderWidth: 4,
+    borderColor: CYAN_COLOR,
   },
   buttonText: {
-    color: "#333333",
-    fontSize: 16,
-    fontWeight: "500",
-    letterSpacing: 0.5,
+    color: "#111111",
+    fontSize: 18,
+    fontWeight: "700",
   },
   buttonPressed: {
-    opacity: 0.6,
-    backgroundColor: "#F9F9F9",
+    opacity: 0.7,
+    backgroundColor: "#F0F0F0",
   },
 });
