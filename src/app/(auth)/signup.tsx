@@ -103,15 +103,18 @@ export default function SignupScreen() {
       }
     } catch (error: any) {
       setIsLoading(false);
+      console.error("Google sign-in failed:", error);
+
       if (error.code === statusCodes.IN_PROGRESS) {
         setErrorMessage("Sign in is in progress.");
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         setErrorMessage("Play services not available or outdated.");
       } else if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // User cancelled the login flow
         setErrorMessage("Google Sign-In was cancelled by user.");
+      } else if (error.code === "DEVELOPER_ERROR" || /GoogleService|google-services|clientId|configure/i.test(String(error?.message ?? ""))) {
+        setErrorMessage("Google Sign-In is not configured correctly. Add the native Google config files and verify the Google client IDs in Expo.");
       } else {
-        setErrorMessage("An error occurred during Google Sign-In.");
+        setErrorMessage(error?.message || "An error occurred during Google Sign-In.");
       }
     }
   };

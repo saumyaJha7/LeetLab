@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "402769576246",
+    "project_id": "leetlab-cdcbb",
+    "storage_bucket": "leetlab-cdcbb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402769576246:android:dc35f58588adc083a5b397",
+        "android_client_info": {
+          "package_name": "com.saumyajha.LeetLab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCW6M5P3pbUHdhTipBaCi8JygsR68Qyww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
