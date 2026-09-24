@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Redirect, Tabs, router } from "expo-router";
+import { Redirect, Stack, router } from "expo-router";
 import { supabase } from "../../lib/supabase";
 
 export default function TabsLayout() {
@@ -54,10 +54,9 @@ export default function TabsLayout() {
   }
 
   return (
-    <Tabs>
-      <Tabs.Screen name="index" options={{ title: "Home" }} />
-      <Tabs.Screen name="problems" options={{ title: "Problems" }} />
-      <Tabs.Screen name="profile" options={{ title: "Profile" }} />
-    </Tabs>
+    <Stack screenOptions={{headerShown: false}}>
+      <Stack.Screen name="problems" options={{ title: "Problems" }} />
+      <Stack.Screen name="profile" options={{ title: "Profile" }} />
+    </Stack>
   );
 }
