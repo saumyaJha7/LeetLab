@@ -170,6 +170,14 @@ export default function ProblemDetailScreen() {
             </View>
           </View>
         )}
+
+        <Pressable
+          onPress={() => router.push(`/(tabs)/problems/${problemId}/codeEditor`)}
+          style={({ pressed }) => [styles.codeButton, pressed && styles.pressedCodeButton]}
+        >
+          <Feather name="code" size={18} color="#121212" />
+          <Text style={styles.codeButtonText}>Open Code Editor</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -349,6 +357,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#4DABF7",
     fontWeight: "600",
+  },
+  codeButton: {
+    minHeight: 52,
+    borderRadius: 12,
+    backgroundColor: "#4DABF7",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    marginBottom: 24,
+  },
+  pressedCodeButton: {
+    opacity: 0.72,
+  },
+  codeButtonText: {
+    color: "#121212",
+    fontSize: 16,
+    fontWeight: "700",
   },
 
   /* Error / empty */
