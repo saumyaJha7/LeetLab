@@ -13,14 +13,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
-import { supabase } from "../../../lib/supabase";
-
-interface Problem {
-  problem_id: number;
-  title: string;
-  tags?: string[];
-  languages?: string[];
-}
+import { useProblem } from "../../../hooks/useProblem";
 
 const FALLBACK_LANGUAGE = "JavaScript";
 
@@ -28,39 +21,16 @@ export default function CodeEditorScreen() {
   const { problemId } = useLocalSearchParams<{ problemId: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [problem, setProblem] = useState<Problem | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { problem, loading } = useProblem(problemId);
   const [selectedLanguage, setSelectedLanguage] = useState(FALLBACK_LANGUAGE);
   const [code, setCode] = useState("");
   const [submissionStatus, setSubmissionStatus] = useState("");
 
   useEffect(() => {
-    if (!problemId) {
-      setLoading(false);
-      return;
+    if (problem) {
+      setSelectedLanguage(problem.languages?.[0] ?? FALLBACK_LANGUAGE);
     }
-
-    const fetchProblem = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("problems")
-        .select("problem_id, title, tags, languages")
-        .eq("problem_id", problemId)
-        .single();
-
-      if (error) {
-        console.error("Error fetching problem for editor:", error);
-      } else if (data) {
-        const fetchedProblem = data as Problem;
-        setProblem(fetchedProblem);
-        setSelectedLanguage(fetchedProblem.languages?.[0] ?? FALLBACK_LANGUAGE);
-      }
-
-      setLoading(false);
-    };
-
-    fetchProblem();
-  }, [problemId]);
+  }, [problem]);
 
   const languages = problem?.languages?.length ? problem.languages : [FALLBACK_LANGUAGE];
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -10,52 +10,13 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
-import { supabase } from "../../../lib/supabase";
-
-interface Example {
-  input: string;
-  output: string;
-  explanation?: string;
-}
-
-interface Problem {
-  problem_id: number;
-  title: string;
-  description: string;
-  tags: string[];
-  examples: Example[];
-  hints: string[];
-  constraints: string[];
-  languages: string[];
-  acceptance_rate: number;
-}
+import { useProblem } from "../../../hooks/useProblem";
 
 export default function ProblemDetailScreen() {
   const { problemId } = useLocalSearchParams<{ problemId: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [problem, setProblem] = useState<Problem | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (problemId) fetchProblem();
-  }, [problemId]);
-
-  const fetchProblem = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("problems")
-      .select("*")
-      .eq("problem_id", problemId)
-      .single();
-
-    if (error) {
-      console.error("Error fetching problem:", error);
-    } else {
-      setProblem(data);
-    }
-    setLoading(false);
-  };
+  const { problem, loading } = useProblem(problemId);
 
   if (loading) {
     return (
