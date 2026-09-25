@@ -1,389 +1,204 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
-  Modal,
   Platform,
-  Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { Button, useThemeColor } from "heroui-native";
+import { Screen, EmptyState, LoadingState } from "../../../components/ui";
+import { ProblemTags } from "../../../components/problems";
+import {
+  LanguageSelect,
+  type LanguageOption,
+} from "../../../components/editor";
 import { useProblem } from "../../../hooks/useProblem";
+import { colors } from "../../../theme";
 
 const FALLBACK_LANGUAGE = "JavaScript";
+
+const monoFont = Platform.select({
+  ios: "Menlo",
+  android: "monospace",
+  default: "monospace",
+});
 
 export default function CodeEditorScreen() {
   const { problemId } = useLocalSearchParams<{ problemId: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const accentForeground = useThemeColor("accent-foreground");
   const { problem, loading } = useProblem(problemId);
-  const [selectedLanguage, setSelectedLanguage] = useState(FALLBACK_LANGUAGE);
-  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+
+  const [selected, setSelected] = useState<LanguageOption | undefined>(
+    undefined
+  );
   const [code, setCode] = useState("");
-  const [submissionStatus, setSubmissionStatus] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    if (problem) {
-      setSelectedLanguage(problem.languages?.[0] ?? FALLBACK_LANGUAGE);
+    if (problem && !selected) {
+      const first = problem.languages?.[0] ?? FALLBACK_LANGUAGE;
+      setSelected({ value: first, label: first });
     }
-  }, [problem]);
-
-  const languages = problem?.languages?.length ? problem.languages : [FALLBACK_LANGUAGE];
-
-  const selectLanguage = (language: string) => {
-    setSelectedLanguage(language);
-    setLanguageMenuOpen(false);
-  };
+  }, [problem, selected]);
 
   if (loading) {
     return (
-      <View style={[styles.container, styles.centered, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color="#4DABF7" />
-      </View>
+      <Screen>
+        <LoadingState label="Loading editor…" />
+      </Screen>
     );
   }
 
   if (!problem) {
     return (
-      <View style={[styles.container, styles.centered, { paddingTop: insets.top }]}>
-        <Text style={styles.errorText}>Problem not found.</Text>
-        <Pressable onPress={() => router.back()} style={styles.backLink}>
-          <Text style={styles.backLinkText}>Go back</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <EmptyState
+          title="Problem not found"
+          description="It may have been removed or the link is wrong."
+          actionLabel="Go back"
+          onAction={() => router.back()}
+        />
+      </Screen>
     );
   }
 
+  const languages =
+    problem.languages?.length ? problem.languages : [FALLBACK_LANGUAGE];
+
+  const handleLanguageChange = (next: LanguageOption | undefined) => {
+    if (next) {
+      setSelected(next);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { paddingTop: insets.top }]}
+      style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Feather name="arrow-left" size={22} color="#FF6B6B" />
-        </Pressable>
-        <View style={styles.headerCopy}>
-          <Text style={styles.screenTitle}>Code Editor</Text>
-          <Text style={styles.problemTitle} numberOfLines={1}>{problem.title}</Text>
-        </View>
-      </View>
-
-      <View style={styles.toolbar}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ expanded: languageMenuOpen }}
-          onPress={() => setLanguageMenuOpen(true)}
-          style={({ pressed }) => [styles.languageButton, pressed && styles.pressedControl]}
-        >
-          <Feather name="code" size={15} color="#4DABF7" />
-          <Text style={styles.controlText}>{selectedLanguage}</Text>
-          <Feather name="chevron-down" size={15} color="#8B95A5" />
-        </Pressable>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tagsContent}
-          style={styles.tagsScroll}
-        >
-          {(problem.tags?.length ? problem.tags : ["Problem"]).map((tag) => (
-            <View key={tag} style={styles.tagChip}>
-              <Text style={styles.tagText}>{tag}</Text>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-
-      <Modal
-        visible={languageMenuOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setLanguageMenuOpen(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close language menu"
-            onPress={() => setLanguageMenuOpen(false)}
-            style={StyleSheet.absoluteFill}
-          />
-          <View style={styles.languageMenu}>
-            <Text style={styles.languageMenuTitle}>Choose language</Text>
-            {languages.map((language) => {
-              const isSelected = language === selectedLanguage;
-
-              return (
-                <Pressable
-                  key={language}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: isSelected }}
-                  onPress={() => selectLanguage(language)}
-                  style={({ pressed }) => [
-                    styles.languageOption,
-                    isSelected && styles.selectedLanguageOption,
-                    pressed && styles.pressedLanguageOption,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.languageOptionText,
-                      isSelected && styles.selectedLanguageOptionText,
-                    ]}
-                  >
-                    {language}
-                  </Text>
-                  {isSelected ? <Feather name="check" size={18} color="#51CF66" /> : null}
-                </Pressable>
-              );
-            })}
+      <Screen>
+        {/* Header */}
+        <View className="mb-4 flex-row items-center gap-3">
+          <Button
+            variant="ghost"
+            isIconOnly
+            accessibilityLabel="Go back"
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={22} color={colors.foreground} />
+          </Button>
+          <View className="flex-1">
+            <Text
+              className="text-foreground"
+              style={{ fontSize: 20, fontWeight: "800" }}
+            >
+              Code Editor
+            </Text>
+            <Text
+              className="mt-0.5 text-muted"
+              style={{ fontSize: 13 }}
+              numberOfLines={1}
+            >
+              {problem.title}
+            </Text>
           </View>
         </View>
-      </Modal>
 
-      <View style={styles.editorFrame}>
-        <View style={styles.editorHeader}>
-          <Text style={styles.editorLabel}>Solution</Text>
-          <Text style={styles.editorHint}>Editable draft</Text>
+        {/* Toolbar: language + tags */}
+        <View className="mb-3 flex-row items-center gap-2.5">
+          <LanguageSelect
+            languages={languages}
+            selected={selected}
+            onChange={handleLanguageChange}
+          />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingRight: 4 }}
+            style={{ flex: 1 }}
+          >
+            <ProblemTags tags={problem.tags ?? []} />
+          </ScrollView>
         </View>
-        <TextInput
-          value={code}
-          onChangeText={(value) => {
-            setCode(value);
-            setSubmissionStatus("");
-          }}
-          placeholder="Write your solution here..."
-          placeholderTextColor="#687386"
-          multiline
-          textAlignVertical="top"
-          autoCapitalize="none"
-          autoCorrect={false}
-          spellCheck={false}
-          style={styles.editorInput}
-        />
-      </View>
 
-      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-        {submissionStatus ? <Text style={styles.statusText}>{submissionStatus}</Text> : null}
-        <Pressable
-          onPress={() => setSubmissionStatus(code.trim() ? "Draft ready to submit" : "Write some code first")}
-          style={({ pressed }) => [styles.submitButton, pressed && styles.pressedSubmitButton]}
+        {/* Editor frame */}
+        <View className="min-h-65 flex-1 overflow-hidden rounded-2xl border border-border bg-surface">
+          <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
+            <Text
+              className="text-foreground"
+              style={{ fontSize: 13, fontWeight: "700" }}
+            >
+              Solution
+            </Text>
+            <Text className="text-muted" style={{ fontSize: 12 }}>
+              {selected?.label ?? FALLBACK_LANGUAGE}
+            </Text>
+          </View>
+          <TextInput
+            value={code}
+            onChangeText={(value) => {
+              setCode(value);
+              setStatus(null);
+            }}
+            placeholder="Write your solution here…"
+            placeholderTextColor={colors.faint}
+            multiline
+            textAlignVertical="top"
+            autoCapitalize="none"
+            autoCorrect={false}
+            spellCheck={false}
+            style={{
+              flex: 1,
+              padding: 16,
+              color: colors.foreground,
+              fontFamily: monoFont,
+              fontSize: 14,
+              lineHeight: 22,
+            }}
+          />
+        </View>
+
+        {/* Footer */}
+        <View
+          style={{
+            paddingTop: 14,
+            paddingBottom: Math.max(insets.bottom, 16),
+          }}
         >
-          <Text style={styles.submitText}>Submit</Text>
-          <Feather name="arrow-up-right" size={18} color="#121212" />
-        </Pressable>
-      </View>
+          {status ? (
+            <Text
+              className="mb-2 text-center text-muted"
+              style={{ fontSize: 12 }}
+            >
+              {status}
+            </Text>
+          ) : null}
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-full"
+            onPress={() =>
+              setStatus(
+                code.trim() ? "Draft ready to submit" : "Write some code first"
+              )
+            }
+          >
+            <Button.Label>Submit</Button.Label>
+            <Ionicons
+              name="send"
+              size={16}
+              color={accentForeground}
+            />
+          </Button>
+        </View>
+      </Screen>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#121212",
-  },
-  centered: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 20,
-    gap: 14,
-  },
-  backButton: {
-    width: 44,
-    height: 36,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#FF6B6B",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerCopy: {
-    flex: 1,
-  },
-  screenTitle: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    fontWeight: "700",
-  },
-  problemTitle: {
-    color: "#8B95A5",
-    fontSize: 13,
-    marginTop: 3,
-  },
-  toolbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 24,
-    gap: 10,
-    marginBottom: 14,
-  },
-  languageButton: {
-    minHeight: 38,
-    borderWidth: 1,
-    borderColor: "#4DABF7",
-    borderRadius: 8,
-    paddingHorizontal: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-  },
-  tagsScroll: {
-    flex: 1,
-  },
-  tagsContent: {
-    gap: 8,
-    paddingRight: 2,
-  },
-  tagChip: {
-    minHeight: 32,
-    justifyContent: "center",
-    backgroundColor: "rgba(81, 207, 102, 0.14)",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-  },
-  tagText: {
-    color: "#51CF66",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  controlText: {
-    color: "#D7E3F4",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  pressedControl: {
-    opacity: 0.7,
-  },
-  modalBackdrop: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-    backgroundColor: "rgba(0, 0, 0, 0.72)",
-  },
-  languageMenu: {
-    width: "100%",
-    maxWidth: 420,
-    borderWidth: 1,
-    borderColor: "#34465D",
-    borderRadius: 16,
-    padding: 16,
-    backgroundColor: "#171B22",
-  },
-  languageMenuTitle: {
-    color: "#FFFFFF",
-    fontSize: 17,
-    fontWeight: "700",
-    marginBottom: 12,
-  },
-  languageOption: {
-    minHeight: 48,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  selectedLanguageOption: {
-    backgroundColor: "rgba(77, 171, 247, 0.14)",
-  },
-  pressedLanguageOption: {
-    opacity: 0.72,
-  },
-  languageOptionText: {
-    color: "#D7E3F4",
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  selectedLanguageOptionText: {
-    color: "#4DABF7",
-  },
-  editorFrame: {
-    flex: 1,
-    minHeight: 260,
-    marginHorizontal: 24,
-    borderWidth: 1.5,
-    borderColor: "#4DABF7",
-    borderRadius: 14,
-    overflow: "hidden",
-    backgroundColor: "#171B22",
-  },
-  editorHeader: {
-    minHeight: 40,
-    paddingHorizontal: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#29313D",
-  },
-  editorLabel: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  editorHint: {
-    color: "#687386",
-    fontSize: 12,
-  },
-  editorInput: {
-    flex: 1,
-    color: "#D7E3F4",
-    fontFamily: Platform.select({ ios: "Menlo", android: "monospace", default: "monospace" }),
-    fontSize: 14,
-    lineHeight: 22,
-    padding: 16,
-  },
-  footer: {
-    paddingHorizontal: 24,
-    paddingTop: 14,
-  },
-  statusText: {
-    color: "#8B95A5",
-    fontSize: 12,
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  submitButton: {
-    minHeight: 52,
-    borderRadius: 12,
-    backgroundColor: "#51CF66",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 9,
-  },
-  pressedSubmitButton: {
-    opacity: 0.72,
-  },
-  submitText: {
-    color: "#121212",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  errorText: {
-    color: "#8B95A5",
-    fontSize: 18,
-    marginBottom: 16,
-  },
-  backLink: {
-    paddingVertical: 8,
-  },
-  backLinkText: {
-    color: "#4DABF7",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
