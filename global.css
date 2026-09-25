@@ -1,0 +1,121 @@
+@import "tailwindcss";
+@import "uniwind";
+@import "heroui-native/styles";
+
+/*
+ * LeetLab theme — dark-only lock.
+ * The same values are mirrored in BOTH light and dark variants so the UI
+ * stays dark regardless of system preference. Single source of truth for
+ * hex values lives in src/theme.ts — keep the two files in sync.
+ *
+ * Brand: primary Emerald #00D09E, secondary Sky #4DABF7. Everything else neutral.
+ */
+@layer theme {
+  @variant light {
+    /* Base */
+    --background: #0f1115;
+    --foreground: #f3f8ff;
+    --muted: #8b95a5;
+
+    /* Surface (cards, non-overlay components) */
+    --surface: #1a1d24;
+    --surface-foreground: #f3f8ff;
+    --surface-secondary: #22262f;
+    --surface-secondary-foreground: #f3f8ff;
+    --surface-tertiary: #22262f;
+    --surface-tertiary-foreground: #f3f8ff;
+
+    /* Overlay (dialogs, menus, sheets) */
+    --overlay: #1a1d24;
+    --overlay-foreground: #f3f8ff;
+    --backdrop: rgba(0, 0, 0, 0.6);
+
+    --default: #22262f;
+    --default-foreground: #f3f8ff;
+
+    /* Brand */
+    --accent: #00d09e;
+    --accent-foreground: #052e22;
+
+    /* Form fields — 1px visible border (minimal outlined inputs) */
+    --field-background: #1a1d24;
+    --field-foreground: #f3f8ff;
+    --field-placeholder: #4a5263;
+    --field-border: #2a2e39;
+
+    /* Status */
+    --success: #00d09e;
+    --success-foreground: #052e22;
+    --warning: #ffb800;
+    --warning-foreground: #3a2a00;
+    --danger: #ff6b6b;
+    --danger-foreground: #0f1115;
+
+    /* Misc */
+    --segment: #22262f;
+    --segment-foreground: #f3f8ff;
+    --border: #2a2e39;
+    --separator: #2a2e39;
+    --focus: #00d09e;
+    --link: #4dabf7;
+
+    /* Flat — no shadows in dark minimal theme */
+    --surface-shadow: 0 0 0 0 transparent inset;
+    --overlay-shadow: 0 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+    --field-shadow: 0 0 0 0 transparent inset;
+  }
+
+  @variant dark {
+    /* Base */
+    --background: #0f1115;
+    --foreground: #f3f8ff;
+    --muted: #8b95a5;
+
+    /* Surface (cards, non-overlay components) */
+    --surface: #1a1d24;
+    --surface-foreground: #f3f8ff;
+    --surface-secondary: #22262f;
+    --surface-secondary-foreground: #f3f8ff;
+    --surface-tertiary: #22262f;
+    --surface-tertiary-foreground: #f3f8ff;
+
+    /* Overlay (dialogs, menus, sheets) */
+    --overlay: #1a1d24;
+    --overlay-foreground: #f3f8ff;
+    --backdrop: rgba(0, 0, 0, 0.6);
+
+    --default: #22262f;
+    --default-foreground: #f3f8ff;
+
+    /* Brand */
+    --accent: #00d09e;
+    --accent-foreground: #052e22;
+
+    /* Form fields — 1px visible border (minimal outlined inputs) */
+    --field-background: #1a1d24;
+    --field-foreground: #f3f8ff;
+    --field-placeholder: #4a5263;
+    --field-border: #2a2e39;
+
+    /* Status */
+    --success: #00d09e;
+    --success-foreground: #052e22;
+    --warning: #ffb800;
+    --warning-foreground: #3a2a00;
+    --danger: #ff6b6b;
+    --danger-foreground: #0f1115;
+
+    /* Misc */
+    --segment: #22262f;
+    --segment-foreground: #f3f8ff;
+    --border: #2a2e39;
+    --separator: #2a2e39;
+    --focus: #00d09e;
+    --link: #4dabf7;
+
+    /* Flat — no shadows in dark minimal theme */
+    --surface-shadow: 0 0 0 0 transparent inset;
+    --overlay-shadow: 0 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+    --field-shadow: 0 0 0 0 transparent inset;
+  }
+}
