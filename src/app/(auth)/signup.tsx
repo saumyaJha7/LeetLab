@@ -1,78 +1,66 @@
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
 import { router } from "expo-router";
+import { Input, Label, TextField } from "heroui-native";
 import { supabase } from "../../lib/supabase";
-import {
-  GoogleSignin,
-  isSuccessResponse,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-
-GoogleSignin.configure({
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-});
+import { useGoogleAuth } from "../../hooks/useGoogleAuth";
+import { AuthScreen, type AuthMessage } from "../../components/AuthScreen";
+import { PasswordField } from "../../components/PasswordField";
 
 export default function SignupScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<AuthMessage>(null);
+  const { isGoogleLoading, signInWithGoogle } = useGoogleAuth();
 
   const handleSignupWithEmail = async () => {
     const normalizedEmail = email.trim().toLowerCase();
-
-    setErrorMessage(null);
-    setSuccessMessage(null);
+    setMessage(null);
 
     if (!normalizedEmail || !password || !confirmPassword) {
-      setErrorMessage("Enter your email and both password fields.");
+      setMessage({
+        type: "error",
+        text: "Enter your email and both password fields.",
+      });
       return;
     }
 
     if (password.length < 6) {
-      setErrorMessage("Your password must be at least 6 characters.");
+      setMessage({
+        type: "error",
+        text: "Your password must be at least 6 characters.",
+      });
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
+      setMessage({ type: "error", text: "Passwords do not match." });
       return;
     }
 
     setIsLoading(true);
-
     const { data, error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,
     });
-
     setIsLoading(false);
 
     if (error) {
-      setErrorMessage(error.message);
+      setMessage({ type: "error", text: error.message });
       return;
     }
 
     if (!data.user) {
-      setErrorMessage("Sign up failed. Please try again.");
+      setMessage({ type: "error", text: "Sign up failed. Please try again." });
       return;
     }
 
     if (!data.session) {
-      setErrorMessage("Account created. Check your email to confirm your account.");
+      setMessage({
+        type: "success",
+        text: "Account created. Check your email to confirm your account.",
+      });
       return;
     }
 
@@ -80,445 +68,61 @@ export default function SignupScreen() {
   };
 
   const handleGoogleLogin = async () => {
-    setErrorMessage(null);
-    try {
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-      
-      if (isSuccessResponse(response)) {
-        setIsLoading(true);
-        const { data, error } = await supabase.auth.signInWithIdToken({
-          provider: 'google',
-          token: response.data.idToken as string,
-        });
-        
-        setIsLoading(false);
-        if (error) {
-          setErrorMessage(error.message);
-        } else {
-          router.replace("/(tabs)");
-        }
-      }
-    } catch (error: any) {
-      setIsLoading(false);
-      console.error("Google sign-in failed:", error);
-
-      if (error.code === statusCodes.IN_PROGRESS) {
-        setErrorMessage("Sign in is in progress.");
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        setErrorMessage("Play services not available or outdated.");
-      } else if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        setErrorMessage("Google Sign-In was cancelled by user.");
-      } else if (error.code === "DEVELOPER_ERROR" || /GoogleService|google-services|clientId|configure/i.test(String(error?.message ?? ""))) {
-        setErrorMessage("Google Sign-In is not configured correctly. Add the native Google config files and verify the Google client IDs in Expo.");
-      } else {
-        setErrorMessage(error?.message || "An error occurred during Google Sign-In.");
-      }
+    setMessage(null);
+    const { ok, errorMessage } = await signInWithGoogle();
+    if (errorMessage) {
+      setMessage({ type: "error", text: errorMessage });
+      return;
+    }
+    if (ok) {
+      router.replace("/(tabs)");
     }
   };
 
-  const inputStyle = (field: string) => [
-    styles.input,
-    focusedField === field && styles.inputFocused,
-  ];
+  const busy = isLoading || isGoogleLoading;
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <AuthScreen
+      eyebrow="START YOUR RUN"
+      title="Build your edge."
+      subtitle="Create an account and turn daily practice into a sharper problem-solving habit."
+      formTitle="Create your account"
+      submitLabel="Create account"
+      isSubmitting={isLoading}
+      onSubmit={handleSignupWithEmail}
+      message={message}
+      isGoogleLoading={isGoogleLoading}
+      onGooglePress={handleGoogleLogin}
+      footerPrompt="Already have an account?"
+      footerActionLabel="Log in"
+      onFooterPress={() => router.replace("/(auth)/login")}
     >
-      <View style={styles.backgroundAccent} />
-      <ScrollView
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.brandRow}>
-          <View style={styles.brandMark}>
-            <Text style={styles.brandMarkText}>L</Text>
-          </View>
-          <Text style={styles.brandName}>LEETLAB</Text>
-        </View>
-
-        <View style={styles.eyebrowRow}>
-          <View style={styles.eyebrowDot} />
-          <Text style={styles.eyebrow}>START YOUR RUN</Text>
-        </View>
-
-        <Text style={styles.title}>Build your edge.</Text>
-        <Text style={styles.subtitle}>
-          Create an account and turn daily practice into a sharper
-          problem-solving habit.
-        </Text>
-
-        <View style={styles.formCard}>
-          <View style={styles.formHeader}>
-            <Text style={styles.formTitle}>Create your account</Text>
-            <Text style={styles.formStep}>01 / 01</Text>
-          </View>
-
-          <View style={styles.form}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                autoCapitalize="none"
-                autoCorrect={false}
-                editable={!isLoading}
-                keyboardType="email-address"
-                onBlur={() => setFocusedField(null)}
-                onChangeText={setEmail}
-                onFocus={() => setFocusedField("email")}
-                placeholder="Enter your email"
-                placeholderTextColor="#6F8BA8"
-                style={inputStyle("email")}
-                value={email}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                editable={!isLoading}
-                onBlur={() => setFocusedField(null)}
-                onChangeText={setPassword}
-                onFocus={() => setFocusedField("password")}
-                placeholder="Create a password"
-                placeholderTextColor="#6F8BA8"
-                secureTextEntry
-                style={inputStyle("password")}
-                value={password}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Confirm password</Text>
-              <TextInput
-                editable={!isLoading}
-                onBlur={() => setFocusedField(null)}
-                onChangeText={setConfirmPassword}
-                onFocus={() => setFocusedField("confirmPassword")}
-                placeholder="Confirm your password"
-                placeholderTextColor="#6F8BA8"
-                secureTextEntry
-                style={inputStyle("confirmPassword")}
-                value={confirmPassword}
-              />
-            </View>
-
-            {errorMessage ? (
-              <Text accessibilityRole="alert" style={styles.errorMessage}>
-                {errorMessage}
-              </Text>
-            ) : null}
-
-            {successMessage ? (
-              <Text style={styles.successMessage}>{successMessage}</Text>
-            ) : null}
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityState={{ disabled: isLoading }}
-              disabled={isLoading}
-              onPress={handleSignupWithEmail}
-              style={({ pressed }) => [
-                styles.signupButton,
-                pressed && styles.signupButtonPressed,
-                isLoading && styles.signupButtonDisabled,
-              ]}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#04101D" />
-              ) : (
-                <Text style={styles.signupButtonText}>Create account</Text>
-              )}
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-          <Text style={styles.orText}>OR</Text>
-          <View style={styles.divider} />
-        </View>
-
-        <Pressable
-          accessibilityRole="button"
-          disabled={isLoading}
-          onPress={handleGoogleLogin}
-          style={({ pressed }) => [
-            styles.googleButton,
-            pressed && styles.googleButtonPressed,
-          ]}
-        >
-          <View style={styles.googleIcon}>
-            <Text style={styles.googleIconText}>G</Text>
-          </View>
-          <Text style={styles.googleButtonText}>Continue with Google</Text>
-        </Pressable>
-
-        <View style={styles.loginContainer}>
-          <Text style={styles.loginText}>Already have an account?</Text>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.replace("/(auth)/login")}
-            style={styles.loginLinkButton}
-          >
-            {({ pressed }) => (
-              <Text style={[styles.loginLink, pressed && styles.pressedLink]}>
-                Login
-              </Text>
-            )}
-          </Pressable>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      <TextField isRequired>
+        <Label>Email</Label>
+        <Input
+          placeholder="Enter your email"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          editable={!busy}
+          value={email}
+          onChangeText={setEmail}
+        />
+      </TextField>
+      <PasswordField
+        label="Password"
+        value={password}
+        onChangeText={setPassword}
+        placeholder="Create a password"
+        editable={!busy}
+      />
+      <PasswordField
+        label="Confirm password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        placeholder="Confirm your password"
+        editable={!busy}
+      />
+    </AuthScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#06101D",
-  },
-  backgroundAccent: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    width: 92,
-    height: "100%",
-    backgroundColor: "#0A2038",
-    borderLeftWidth: 1,
-    borderLeftColor: "#12385F",
-    opacity: 0.7,
-  },
-  content: {
-    flexGrow: 1,
-    justifyContent: "center",
-    paddingHorizontal: 22,
-    paddingVertical: 28,
-  },
-  brandRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 42,
-  },
-  brandMark: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#3B9BFF",
-    elevation: 5,
-    shadowColor: "#3B9BFF",
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 5 },
-  },
-  brandMarkText: {
-    color: "#06101D",
-    fontSize: 20,
-    fontWeight: "900",
-  },
-  brandName: {
-    color: "#BBD9F7",
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 2.4,
-  },
-  eyebrowRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 10,
-  },
-  eyebrowDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#52B1FF",
-  },
-  eyebrow: {
-    color: "#52B1FF",
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.6,
-  },
-  title: {
-    color: "#F3F8FF",
-    fontSize: 36,
-    lineHeight: 42,
-    fontWeight: "800",
-    marginBottom: 10,
-  },
-  subtitle: {
-    maxWidth: 350,
-    color: "#8EA7C1",
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: 24,
-  },
-  formCard: {
-    borderWidth: 1,
-    borderColor: "#173A61",
-    borderRadius: 18,
-    padding: 16,
-    backgroundColor: "#0B1B2E",
-    elevation: 7,
-    shadowColor: "#000000",
-    shadowOpacity: 0.25,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
-  },
-  formHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  formTitle: {
-    color: "#DCEBFA",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  formStep: {
-    color: "#4C82B4",
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  form: {
-    gap: 15,
-  },
-  inputGroup: {
-    gap: 8,
-  },
-  label: {
-    color: "#AFC7DF",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  input: {
-    height: 54,
-    borderWidth: 1,
-    borderColor: "#234565",
-    borderRadius: 11,
-    paddingHorizontal: 16,
-    color: "#F3F8FF",
-    backgroundColor: "#071525",
-    fontSize: 15,
-  },
-  inputFocused: {
-    borderColor: "#3B9BFF",
-    backgroundColor: "#0A1D32",
-    shadowColor: "#3B9BFF",
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 0 },
-  },
-  signupButton: {
-    height: 54,
-    borderRadius: 11,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 4,
-    backgroundColor: "#3B9BFF",
-    elevation: 5,
-    shadowColor: "#3B9BFF",
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-  },
-  signupButtonText: {
-    color: "#04101D",
-    fontSize: 16,
-    fontWeight: "800",
-  },
-  signupButtonPressed: {
-    backgroundColor: "#77C0FF",
-  },
-  signupButtonDisabled: {
-    backgroundColor: "#38678F",
-  },
-  errorMessage: {
-    color: "#FF9A9A",
-    fontSize: 13,
-    lineHeight: 19,
-  },
-  successMessage: {
-    color: "#8FE0A8",
-    fontSize: 13,
-    lineHeight: 19,
-  },
-  dividerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    marginVertical: 22,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#1A3A5B",
-  },
-  orText: {
-    color: "#5B7D9F",
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  googleButton: {
-    height: 52,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    borderWidth: 1,
-    borderColor: "#234565",
-    borderRadius: 11,
-    backgroundColor: "#0B1B2E",
-  },
-  googleIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F3F8FF",
-  },
-  googleIconText: {
-    color: "#4285F4",
-    fontSize: 14,
-    fontWeight: "900",
-  },
-  googleButtonText: {
-    color: "#DCEBFA",
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  googleButtonPressed: {
-    borderColor: "#3B9BFF",
-    backgroundColor: "#102945",
-  },
-  loginContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 24,
-  },
-  loginText: {
-    color: "#7895B2",
-    fontSize: 14,
-  },
-  loginLinkButton: {
-    marginLeft: 4,
-  },
-  loginLink: {
-    color: "#52B1FF",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-  pressedLink: {
-    color: "#A9D9FF",
-  },
-});
