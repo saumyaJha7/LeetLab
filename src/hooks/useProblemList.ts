@@ -8,8 +8,8 @@ export type ProblemSummary = {
   acceptance_rate: number;
 };
 
-/** Problem list summaries + total count (single query). */
-export function useProblemList(limit = 10) {
+/** Problem list summaries + total count (single query). Omit limit to fetch all. */
+export function useProblemList(limit?: number) {
   const [problems, setProblems] = useState<ProblemSummary[]>([]);
   const [total, setTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,11 +19,16 @@ export function useProblemList(limit = 10) {
     setLoading(true);
     setError(null);
 
-    const { data, count, error: queryError } = await supabase
+    let query = supabase
       .from("problems")
       .select("problem_id, title, tags, acceptance_rate", { count: "exact" })
-      .order("problem_id", { ascending: true })
-      .limit(limit);
+      .order("problem_id", { ascending: true });
+
+    if (limit !== undefined) {
+      query = query.limit(limit);
+    }
+
+    const { data, count, error: queryError } = await query;
 
     if (queryError) {
       console.error("Error fetching problems:", queryError);
