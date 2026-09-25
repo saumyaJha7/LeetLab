@@ -1,355 +1,161 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  Pressable,
-} from "react-native";
+import { Platform, ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { Button, useThemeColor } from "heroui-native";
+import { Screen, EmptyState, LoadingState } from "../../../components/ui";
+import {
+  DetailSection,
+  ExampleBlock,
+  ProblemTags,
+} from "../../../components/problems";
 import { useProblem } from "../../../hooks/useProblem";
+import { colors } from "../../../theme";
+
+const monoFont = Platform.select({
+  ios: "Menlo",
+  android: "monospace",
+  default: "monospace",
+});
 
 export default function ProblemDetailScreen() {
   const { problemId } = useLocalSearchParams<{ problemId: string }>();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const accentForeground = useThemeColor("accent-foreground");
   const { problem, loading } = useProblem(problemId);
 
   if (loading) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color="#4DABF7" style={{ marginTop: 50 }} />
-      </View>
+      <Screen>
+        <LoadingState label="Loading problem…" />
+      </Screen>
     );
   }
 
   if (!problem) {
     return (
-      <View style={[styles.container, styles.centered, { paddingTop: insets.top }]}>
-        <Text style={styles.errorText}>Problem not found.</Text>
-        <Pressable onPress={() => router.back()} style={styles.backLink}>
-          <Text style={styles.backLinkText}>← Go back</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <EmptyState
+          title="Problem not found"
+          description="It may have been removed or the link is wrong."
+          actionLabel="Go back"
+          onAction={() => router.back()}
+        />
+      </Screen>
     );
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Header: back button + screen title */}
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <Feather name="arrow-left" size={22} color="#FF6B6B" />
-          </Pressable>
-          <Text style={styles.screenTitle}>Problem Detail</Text>
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header: neutral back + title */}
+        <View className="mb-5 flex-row items-center gap-3">
+          <Button
+            variant="ghost"
+            isIconOnly
+            accessibilityLabel="Go back"
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={22} color={colors.foreground} />
+          </Button>
+          <Text
+            className="text-foreground"
+            style={{ fontSize: 20, fontWeight: "800" }}
+          >
+            Problem
+          </Text>
         </View>
 
-        {/* Title card */}
-        <View style={styles.titleCard}>
-          <Text style={styles.problemTitle}>{problem.title}</Text>
-          <View style={styles.titleMeta}>
-            <View style={styles.tagsRow}>
-              {problem.tags?.map((tag, i) => (
-                <View key={i} style={styles.tagChip}>
-                  <Text style={styles.tagText}>{tag}</Text>
-                </View>
-              ))}
-            </View>
-            <Text style={styles.acceptance}>{problem.acceptance_rate}%</Text>
+        {/* Title block */}
+        <View className="mb-5 gap-3">
+          <Text
+            className="text-foreground"
+            style={{ fontSize: 24, fontWeight: "800", lineHeight: 30 }}
+          >
+            {problem.title}
+          </Text>
+          <View className="flex-row flex-wrap items-center gap-2">
+            <ProblemTags tags={problem.tags ?? []} />
+            <Text className="text-muted" style={{ fontSize: 13 }}>
+              {problem.acceptance_rate}% acceptance
+            </Text>
           </View>
         </View>
 
-        {/* Description */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Description</Text>
-          <Text style={styles.descriptionText}>{problem.description}</Text>
-        </View>
+        <DetailSection title="Description">
+          <Text
+            className="text-foreground"
+            style={{ fontSize: 15, lineHeight: 24 }}
+          >
+            {problem.description}
+          </Text>
+        </DetailSection>
 
-        {/* Examples */}
-        {problem.examples && problem.examples.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Examples</Text>
-            {problem.examples.map((ex, i) => (
-              <View key={i} style={styles.exampleCard}>
-                <Text style={styles.exampleLabel}>Example {i + 1}:</Text>
-                <Text style={styles.exampleLine}>
-                  <Text style={styles.exampleKey}>Input: </Text>
-                  {ex.input}
+        {problem.examples && problem.examples.length > 0 ? (
+          <DetailSection title="Examples">
+            {problem.examples.map((example, index) => (
+              <ExampleBlock
+                key={index}
+                example={example}
+                index={index}
+              />
+            ))}
+          </DetailSection>
+        ) : null}
+
+        {problem.hints && problem.hints.length > 0 ? (
+          <DetailSection title="Hints">
+            {problem.hints.map((hint, index) => (
+              <View key={index} className="flex-row items-start gap-2.5">
+                <Ionicons
+                  name="bulb-outline"
+                  size={16}
+                  color={colors.primary}
+                  style={{ marginTop: 3 }}
+                />
+                <Text
+                  className="flex-1 text-muted"
+                  style={{ fontSize: 14, lineHeight: 22 }}
+                >
+                  {hint}
                 </Text>
-                <Text style={styles.exampleLine}>
-                  <Text style={styles.exampleKey}>Output: </Text>
-                  {ex.output}
-                </Text>
-                {ex.explanation && (
-                  <Text style={styles.exampleLine}>
-                    <Text style={styles.exampleKey}>Explanation: </Text>
-                    {ex.explanation}
-                  </Text>
-                )}
               </View>
             ))}
-          </View>
-        )}
+          </DetailSection>
+        ) : null}
 
-        {/* Hints */}
-        {problem.hints && problem.hints.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Hints</Text>
-            {problem.hints.map((hint, i) => (
-              <View key={i} style={styles.hintRow}>
-                <Text style={styles.hintBullet}>💡</Text>
-                <Text style={styles.hintText}>{hint}</Text>
-              </View>
+        {problem.constraints && problem.constraints.length > 0 ? (
+          <DetailSection title="Constraints">
+            {problem.constraints.map((constraint, index) => (
+              <Text
+                key={index}
+                className="text-muted"
+                style={{ fontSize: 14, lineHeight: 22, fontFamily: monoFont }}
+              >
+                • {constraint}
+              </Text>
             ))}
-          </View>
-        )}
+          </DetailSection>
+        ) : null}
 
-        {/* Constraints */}
-        {problem.constraints && problem.constraints.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Constraints</Text>
-            {problem.constraints.map((c, i) => (
-              <Text key={i} style={styles.constraintText}>• {c}</Text>
-            ))}
-          </View>
-        )}
+        {problem.languages && problem.languages.length > 0 ? (
+          <DetailSection title="Supported languages">
+            <ProblemTags tags={problem.languages} size="md" />
+          </DetailSection>
+        ) : null}
 
-        {/* Languages / Code */}
-        {problem.languages && problem.languages.length > 0 && (
-          <View style={styles.codeCard}>
-            <Text style={styles.codeTitle}>Supported Languages</Text>
-            <View style={styles.langRow}>
-              {problem.languages.map((lang, i) => (
-                <View key={i} style={styles.langChip}>
-                  <Text style={styles.langText}>{lang}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-
-        <Pressable
-          onPress={() => router.push(`/(tabs)/problems/${problemId}/codeEditor`)}
-          style={({ pressed }) => [styles.codeButton, pressed && styles.pressedCodeButton]}
+        <Button
+          variant="primary"
+          size="lg"
+          className="mt-1 w-full"
+          onPress={() => router.push(`/(tabs)/${problemId}/codeEditor`)}
         >
-          <Feather name="code" size={18} color="#121212" />
-          <Text style={styles.codeButtonText}>Open Code Editor</Text>
-        </Pressable>
+          <Ionicons name="code-slash" size={18} color={accentForeground} />
+          <Button.Label>Open Code Editor</Button.Label>
+        </Button>
       </ScrollView>
-    </View>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#121212",
-  },
-  centered: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 100,
-  },
-
-  /* Header */
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingTop: 16,
-    paddingBottom: 24,
-    gap: 16,
-  },
-  backButton: {
-    width: 44,
-    height: 36,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#FF6B6B",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  screenTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-
-  /* Title card */
-  titleCard: {
-    borderWidth: 1.5,
-    borderColor: "#4DABF7",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-  },
-  problemTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginBottom: 14,
-  },
-  titleMeta: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  tagsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  tagChip: {
-    backgroundColor: "rgba(81, 207, 102, 0.15)",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  tagText: {
-    fontSize: 13,
-    color: "#51CF66",
-    fontWeight: "600",
-  },
-  acceptance: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#FFB800",
-  },
-
-  /* Sections */
-  section: {
-    borderWidth: 1.5,
-    borderColor: "#333",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#4DABF7",
-    marginBottom: 12,
-  },
-  descriptionText: {
-    fontSize: 15,
-    color: "#CCCCCC",
-    lineHeight: 24,
-  },
-
-  /* Examples */
-  exampleCard: {
-    backgroundColor: "rgba(255,255,255,0.04)",
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 12,
-  },
-  exampleLabel: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginBottom: 8,
-  },
-  exampleLine: {
-    fontSize: 14,
-    color: "#CCCCCC",
-    lineHeight: 22,
-    marginBottom: 4,
-  },
-  exampleKey: {
-    fontWeight: "700",
-    color: "#4DABF7",
-  },
-
-  /* Hints */
-  hintRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 10,
-  },
-  hintBullet: {
-    fontSize: 16,
-  },
-  hintText: {
-    flex: 1,
-    fontSize: 14,
-    color: "#CCCCCC",
-    lineHeight: 22,
-  },
-
-  /* Constraints */
-  constraintText: {
-    fontSize: 14,
-    color: "#CCCCCC",
-    lineHeight: 22,
-    marginBottom: 4,
-  },
-
-  /* Code / Languages */
-  codeCard: {
-    borderWidth: 1.5,
-    borderColor: "#4DABF7",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-  },
-  codeTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginBottom: 12,
-  },
-  langRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  langChip: {
-    backgroundColor: "rgba(77, 171, 247, 0.15)",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  langText: {
-    fontSize: 14,
-    color: "#4DABF7",
-    fontWeight: "600",
-  },
-  codeButton: {
-    minHeight: 52,
-    borderRadius: 12,
-    backgroundColor: "#4DABF7",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    marginBottom: 24,
-  },
-  pressedCodeButton: {
-    opacity: 0.72,
-  },
-  codeButtonText: {
-    color: "#121212",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-
-  /* Error / empty */
-  errorText: {
-    color: "#8B95A5",
-    fontSize: 18,
-    marginBottom: 16,
-  },
-  backLink: {
-    paddingVertical: 8,
-  },
-  backLinkText: {
-    color: "#4DABF7",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
