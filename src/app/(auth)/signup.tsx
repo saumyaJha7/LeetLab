@@ -68,13 +68,8 @@ export default function SignupScreen() {
       return;
     }
 
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
-      setErrorMessage("Account created, but the session could not be initialized.");
+    if (!data.session) {
+      setErrorMessage("Account created. Check your email to confirm your account.");
       return;
     }
 
