@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -23,6 +24,7 @@ export default function CodeEditorScreen() {
   const insets = useSafeAreaInsets();
   const { problem, loading } = useProblem(problemId);
   const [selectedLanguage, setSelectedLanguage] = useState(FALLBACK_LANGUAGE);
+  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const [code, setCode] = useState("");
   const [submissionStatus, setSubmissionStatus] = useState("");
 
@@ -34,10 +36,9 @@ export default function CodeEditorScreen() {
 
   const languages = problem?.languages?.length ? problem.languages : [FALLBACK_LANGUAGE];
 
-  const cycleLanguage = () => {
-    const currentIndex = languages.indexOf(selectedLanguage);
-    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % languages.length;
-    setSelectedLanguage(languages[nextIndex]);
+  const selectLanguage = (language: string) => {
+    setSelectedLanguage(language);
+    setLanguageMenuOpen(false);
   };
 
   if (loading) {
@@ -76,7 +77,9 @@ export default function CodeEditorScreen() {
 
       <View style={styles.toolbar}>
         <Pressable
-          onPress={cycleLanguage}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: languageMenuOpen }}
+          onPress={() => setLanguageMenuOpen(true)}
           style={({ pressed }) => [styles.languageButton, pressed && styles.pressedControl]}
         >
           <Feather name="code" size={15} color="#4DABF7" />
@@ -97,6 +100,52 @@ export default function CodeEditorScreen() {
           ))}
         </ScrollView>
       </View>
+
+      <Modal
+        visible={languageMenuOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setLanguageMenuOpen(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Close language menu"
+            onPress={() => setLanguageMenuOpen(false)}
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={styles.languageMenu}>
+            <Text style={styles.languageMenuTitle}>Choose language</Text>
+            {languages.map((language) => {
+              const isSelected = language === selectedLanguage;
+
+              return (
+                <Pressable
+                  key={language}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected }}
+                  onPress={() => selectLanguage(language)}
+                  style={({ pressed }) => [
+                    styles.languageOption,
+                    isSelected && styles.selectedLanguageOption,
+                    pressed && styles.pressedLanguageOption,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.languageOptionText,
+                      isSelected && styles.selectedLanguageOptionText,
+                    ]}
+                  >
+                    {language}
+                  </Text>
+                  {isSelected ? <Feather name="check" size={18} color="#51CF66" /> : null}
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+      </Modal>
 
       <View style={styles.editorFrame}>
         <View style={styles.editorHeader}>
@@ -216,6 +265,50 @@ const styles = StyleSheet.create({
   },
   pressedControl: {
     opacity: 0.7,
+  },
+  modalBackdrop: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+    backgroundColor: "rgba(0, 0, 0, 0.72)",
+  },
+  languageMenu: {
+    width: "100%",
+    maxWidth: 420,
+    borderWidth: 1,
+    borderColor: "#34465D",
+    borderRadius: 16,
+    padding: 16,
+    backgroundColor: "#171B22",
+  },
+  languageMenuTitle: {
+    color: "#FFFFFF",
+    fontSize: 17,
+    fontWeight: "700",
+    marginBottom: 12,
+  },
+  languageOption: {
+    minHeight: 48,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  selectedLanguageOption: {
+    backgroundColor: "rgba(77, 171, 247, 0.14)",
+  },
+  pressedLanguageOption: {
+    opacity: 0.72,
+  },
+  languageOptionText: {
+    color: "#D7E3F4",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  selectedLanguageOptionText: {
+    color: "#4DABF7",
   },
   editorFrame: {
     flex: 1,
