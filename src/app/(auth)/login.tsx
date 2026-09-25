@@ -4,8 +4,8 @@ import { router } from "expo-router";
 import { Button, Input, Label, TextField } from "heroui-native";
 import { supabase } from "../../lib/supabase";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
-import { AuthScreen, type AuthMessage } from "../../components/AuthScreen";
-import { PasswordField } from "../../components/PasswordField";
+import { AuthScreen, type AuthMessage } from "../../components/auth";
+import { PasswordField } from "../../components/auth";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");

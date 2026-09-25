@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Input, Label, TextField } from "heroui-native";
-import { colors } from "../theme";
+import { colors } from "../../theme";
 
 type PasswordFieldProps = {
   label: string;

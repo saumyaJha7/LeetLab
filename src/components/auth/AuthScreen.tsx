@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Button, Spinner, useThemeColor } from "heroui-native";
-import { colors, spacing } from "../theme";
+import { colors, spacing } from "../../theme";
 
 export type AuthMessage = {
   type: "error" | "success";
