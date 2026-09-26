@@ -1,8 +1,16 @@
 import { useMemo, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { SearchField } from "heroui-native";
-import { Screen, EmptyState, ErrorState, LoadingState } from "../../components/ui";
+import {
+  Screen,
+  EmptyState,
+  EnteringView,
+  ErrorState,
+  LoadingState,
+} from "../../components/ui";
 import { FilterChips, ProblemRow } from "../../components/problems";
+import { REFLOW_SUBTLE } from "../../lib/motion";
 import { useProblemList } from "../../hooks/useProblemList";
 
 export default function ProblemsScreen() {
@@ -55,14 +63,16 @@ export default function ProblemsScreen() {
 
   return (
     <Screen>
-      <FlatList
+      <Animated.FlatList
         data={filtered}
         keyExtractor={(item) => item.problem_id.toString()}
+        itemLayoutAnimation={REFLOW_SUBTLE}
         renderItem={({ item, index }) => (
           <ProblemRow problem={item} showDivider={index < filtered.length - 1} />
         )}
         ListHeaderComponent={
-          <View className="pb-2">
+          <EnteringView index={0}>
+            <View className="pb-2">
             <Text
               className="mb-1 text-foreground"
               style={{ fontSize: 24, fontWeight: "800" }}
@@ -90,7 +100,8 @@ export default function ProblemsScreen() {
                 />
               </View>
             ) : null}
-          </View>
+            </View>
+          </EnteringView>
         }
         ListEmptyComponent={
           <EmptyState

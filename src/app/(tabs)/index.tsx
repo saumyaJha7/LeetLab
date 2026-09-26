@@ -1,5 +1,5 @@
 import { ScrollView } from "react-native";
-import { Screen } from "../../components/ui";
+import { EnteringView, Screen } from "../../components/ui";
 import { HomeHeader, LibraryCard, SuggestedProblems } from "../../components/home";
 import { useProblemList } from "../../hooks/useProblemList";
 import { useProfile } from "../../hooks/useProfile";
@@ -14,14 +14,20 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
       >
-        <HomeHeader name={profile?.name ?? null} />
-        <SuggestedProblems
-          problems={problems}
-          loading={loading}
-          error={error}
-          onRetry={refetch}
-        />
-        <LibraryCard total={total} loading={loading} />
+        <EnteringView index={0}>
+          <HomeHeader name={profile?.name ?? null} />
+        </EnteringView>
+        <EnteringView index={1}>
+          <SuggestedProblems
+            problems={problems}
+            loading={loading}
+            error={error}
+            onRetry={refetch}
+          />
+        </EnteringView>
+        <EnteringView index={2}>
+          <LibraryCard total={total} loading={loading} />
+        </EnteringView>
       </ScrollView>
     </Screen>
   );

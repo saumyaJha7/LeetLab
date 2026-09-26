@@ -1,5 +1,5 @@
 import { ScrollView, Text, View } from "react-native";
-import { Screen, LoadingState } from "../../components/ui";
+import { EnteringView, Screen, LoadingState } from "../../components/ui";
 import {
   AccountDetails,
   ProfileHeader,
@@ -51,15 +51,21 @@ export default function ProfileScreen() {
           <LoadingState label="Loading profile…" />
         ) : (
           <>
-            <ProfileHeader
-              name={profile?.name ?? null}
-              email={email}
-              avatarUrl={profile?.avatar_url ?? null}
-            />
-            <View className="mb-5">
-              <AccountDetails email={email} memberSince={memberSince} />
-            </View>
-            <SignOutButton />
+            <EnteringView index={0}>
+              <ProfileHeader
+                name={profile?.name ?? null}
+                email={email}
+                avatarUrl={profile?.avatar_url ?? null}
+              />
+            </EnteringView>
+            <EnteringView index={1}>
+              <View className="mb-5">
+                <AccountDetails email={email} memberSince={memberSince} />
+              </View>
+            </EnteringView>
+            <EnteringView index={2}>
+              <SignOutButton />
+            </EnteringView>
           </>
         )}
       </ScrollView>

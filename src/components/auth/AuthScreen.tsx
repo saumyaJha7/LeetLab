@@ -2,13 +2,13 @@ import type { ReactNode } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   Text,
   View,
 } from "react-native";
 import { Button, Spinner, useThemeColor } from "heroui-native";
 import { colors, spacing } from "../../theme";
+import { EnteringView, PressableScale } from "../ui";
 
 export type AuthMessage = {
   type: "error" | "success";
@@ -96,30 +96,33 @@ export function AuthScreen({
           </View>
 
           {/* Headings */}
-          <View className="mb-2.5 flex-row items-center gap-2">
-            <View className="h-1.5 w-1.5 rounded-full bg-accent" />
+          <EnteringView index={0}>
+            <View className="mb-2.5 flex-row items-center gap-2">
+              <View className="h-1.5 w-1.5 rounded-full bg-accent" />
+              <Text
+                className="text-accent"
+                style={{ fontSize: 11, fontWeight: "800", letterSpacing: 1.6 }}
+              >
+                {eyebrow}
+              </Text>
+            </View>
             <Text
-              className="text-accent"
-              style={{ fontSize: 11, fontWeight: "800", letterSpacing: 1.6 }}
+              className="mb-2.5 text-foreground"
+              style={{ fontSize: 32, fontWeight: "800", lineHeight: 38 }}
             >
-              {eyebrow}
+              {title}
             </Text>
-          </View>
-          <Text
-            className="mb-2.5 text-foreground"
-            style={{ fontSize: 32, fontWeight: "800", lineHeight: 38 }}
-          >
-            {title}
-          </Text>
-          <Text
-            className="mb-6 text-muted"
-            style={{ fontSize: 15, lineHeight: 22 }}
-          >
-            {subtitle}
-          </Text>
+            <Text
+              className="mb-6 text-muted"
+              style={{ fontSize: 15, lineHeight: 22 }}
+            >
+              {subtitle}
+            </Text>
+          </EnteringView>
 
           {/* Form card */}
-          <View className="rounded-2xl border border-border bg-surface p-4">
+          <EnteringView index={1}>
+            <View className="rounded-2xl border border-border bg-surface p-4">
             <Text
               className="mb-4 text-foreground"
               style={{ fontSize: 15, fontWeight: "700" }}
@@ -140,17 +143,20 @@ export function AuthScreen({
                 <Button.Label>{submitLabel}</Button.Label>
               </Button>
             </View>
-          </View>
+            </View>
+          </EnteringView>
 
           {/* Message banner */}
           {message ? (
-            <Text
-              accessibilityRole="alert"
-              className={message.type === "error" ? "text-danger" : "text-success"}
-              style={{ fontSize: 13, lineHeight: 19, marginTop: 14 }}
-            >
-              {message.text}
-            </Text>
+            <EnteringView index={0}>
+              <Text
+                accessibilityRole="alert"
+                className={message.type === "error" ? "text-danger" : "text-success"}
+                style={{ fontSize: 13, lineHeight: 19, marginTop: 14 }}
+              >
+                {message.text}
+              </Text>
+            </EnteringView>
           ) : null}
 
           {/* Divider */}
@@ -190,24 +196,14 @@ export function AuthScreen({
             <Text className="text-muted" style={{ fontSize: 14 }}>
               {footerPrompt}{" "}
             </Text>
-            <Pressable
-              accessibilityRole="button"
-              onPress={onFooterPress}
-              hitSlop={8}
-            >
-              {({ pressed }) => (
-                <Text
-                  className="text-link"
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "800",
-                    opacity: pressed ? 0.7 : 1,
-                  }}
-                >
-                  {footerActionLabel}
-                </Text>
-              )}
-            </Pressable>
+            <PressableScale onPress={onFooterPress} hitSlop={8}>
+              <Text
+                className="text-link"
+                style={{ fontSize: 14, fontWeight: "800" }}
+              >
+                {footerActionLabel}
+              </Text>
+            </PressableScale>
           </View>
         </ScrollView>
       </View>

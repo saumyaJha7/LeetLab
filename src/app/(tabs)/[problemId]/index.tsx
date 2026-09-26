@@ -2,7 +2,7 @@ import { Platform, ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, useThemeColor } from "heroui-native";
-import { Screen, EmptyState, LoadingState } from "../../../components/ui";
+import { Screen, EmptyState, EnteringView, LoadingState } from "../../../components/ui";
 import {
   DetailSection,
   ExampleBlock,
@@ -69,22 +69,24 @@ export default function ProblemDetailScreen() {
         </View>
 
         {/* Title block */}
-        <View className="mb-5 gap-3">
-          <Text
-            className="text-foreground"
-            style={{ fontSize: 24, fontWeight: "800", lineHeight: 30 }}
-          >
-            {problem.title}
-          </Text>
-          <View className="flex-row flex-wrap items-center gap-2">
-            <ProblemTags tags={problem.tags ?? []} />
-            <Text className="text-muted" style={{ fontSize: 13 }}>
-              {problem.acceptance_rate}% acceptance
+        <EnteringView index={0}>
+          <View className="mb-5 gap-3">
+            <Text
+              className="text-foreground"
+              style={{ fontSize: 24, fontWeight: "800", lineHeight: 30 }}
+            >
+              {problem.title}
             </Text>
+            <View className="flex-row flex-wrap items-center gap-2">
+              <ProblemTags tags={problem.tags ?? []} />
+              <Text className="text-muted" style={{ fontSize: 13 }}>
+                {problem.acceptance_rate}% acceptance
+              </Text>
+            </View>
           </View>
-        </View>
+        </EnteringView>
 
-        <DetailSection title="Description">
+        <DetailSection title="Description" index={1}>
           <Text
             className="text-foreground"
             style={{ fontSize: 15, lineHeight: 24 }}
@@ -94,7 +96,7 @@ export default function ProblemDetailScreen() {
         </DetailSection>
 
         {problem.examples && problem.examples.length > 0 ? (
-          <DetailSection title="Examples">
+          <DetailSection title="Examples" index={2}>
             {problem.examples.map((example, index) => (
               <ExampleBlock
                 key={index}
@@ -106,7 +108,7 @@ export default function ProblemDetailScreen() {
         ) : null}
 
         {problem.hints && problem.hints.length > 0 ? (
-          <DetailSection title="Hints">
+          <DetailSection title="Hints" index={3}>
             {problem.hints.map((hint, index) => (
               <View key={index} className="flex-row items-start gap-2.5">
                 <Ionicons
@@ -127,7 +129,7 @@ export default function ProblemDetailScreen() {
         ) : null}
 
         {problem.constraints && problem.constraints.length > 0 ? (
-          <DetailSection title="Constraints">
+          <DetailSection title="Constraints" index={4}>
             {problem.constraints.map((constraint, index) => (
               <Text
                 key={index}
@@ -141,7 +143,7 @@ export default function ProblemDetailScreen() {
         ) : null}
 
         {problem.languages && problem.languages.length > 0 ? (
-          <DetailSection title="Supported languages">
+          <DetailSection title="Supported languages" index={4}>
             <ProblemTags tags={problem.languages} size="md" />
           </DetailSection>
         ) : null}

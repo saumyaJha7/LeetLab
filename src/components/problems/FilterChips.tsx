@@ -1,5 +1,6 @@
 import { ScrollView } from "react-native";
 import { Chip } from "heroui-native";
+import * as Haptics from "expo-haptics";
 
 type FilterChipsProps = {
   tags: string[];
@@ -25,7 +26,11 @@ export function FilterChips({ tags, active, onChange }: FilterChipsProps) {
             size="sm"
             variant={isActive ? "primary" : "soft"}
             color={isActive ? "accent" : "default"}
-            onPress={() => onChange(tag)}
+            onPress={() => {
+              // One light tick per commit, paired with the chip visual.
+              void Haptics.selectionAsync();
+              onChange(tag);
+            }}
           >
             <Chip.Label>{tag ?? "All"}</Chip.Label>
           </Chip>

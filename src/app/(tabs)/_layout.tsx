@@ -20,6 +20,8 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: tabBar.active,
         tabBarInactiveTintColor: tabBar.inactive,
+        // Tab switches are peers — never slide.
+        animation: "none",
         tabBarStyle: {
           backgroundColor: tabBar.background,
           borderTopColor: tabBar.border,

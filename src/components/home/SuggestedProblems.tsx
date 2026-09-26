@@ -1,7 +1,7 @@
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Card } from "heroui-native";
-import { ErrorState, LoadingState } from "../ui";
+import { ErrorState, LoadingState, PressableScale } from "../ui";
 import { ProblemRow } from "../problems";
 import type { ProblemSummary } from "../../hooks/useProblemList";
 
@@ -30,24 +30,17 @@ export function SuggestedProblems({
         >
           Suggested for you
         </Text>
-        <Pressable
-          accessibilityRole="button"
+        <PressableScale
           onPress={() => router.push("/(tabs)/problems")}
           hitSlop={8}
         >
-          {({ pressed }) => (
-            <Text
-              className="text-link"
-              style={{
-                fontSize: 14,
-                fontWeight: "700",
-                opacity: pressed ? 0.7 : 1,
-              }}
-            >
-              View all
-            </Text>
-          )}
-        </Pressable>
+          <Text
+            className="text-link"
+            style={{ fontSize: 14, fontWeight: "700" }}
+          >
+            View all
+          </Text>
+        </PressableScale>
       </View>
 
       <Card>
