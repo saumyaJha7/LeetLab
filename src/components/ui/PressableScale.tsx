@@ -1,6 +1,6 @@
-import { useState, type ReactNode } from "react";
-import { Pressable, StyleSheet } from "react-native";
-import Animated, { useReducedMotion } from "react-native-reanimated";
+import { useRef, type ReactNode } from "react";
+import { Animated, Easing, Pressable } from "react-native";
+import { useReducedMotion } from "react-native-reanimated";
 import { DURATION } from "../../lib/motion";
 
 type PressableScaleProps = {
@@ -13,8 +13,10 @@ type PressableScaleProps = {
 
 /**
  * Near-imperceptible press feedback for high-frequency touches.
- * scale 0.97 in 120ms, opacity to 0.7 — CSS transition, no shared value,
- * fires setState twice per press (never per frame).
+ * scale 0.97 in 120ms via RN Animated, native driver, transform-only.
+ * Deliberately NOT Reanimated: CSS/entering animations crashed this
+ * app's Android Fabric build, so press feedback stays on the legacy
+ * path until Reanimated is verified on a release build.
  */
 export function PressableScale({
   children,
@@ -23,37 +25,37 @@ export function PressableScale({
   accessibilityLabel,
   hitSlop = 12,
 }: PressableScaleProps) {
-  const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
   const reduced = useReducedMotion();
+
+  const animateTo = (to: number) => {
+    if (reduced) {
+      scale.setValue(1);
+      return;
+    }
+    Animated.timing(scale, {
+      toValue: to,
+      duration: DURATION.press,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
     <Pressable
       accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
-      onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}
+      onPressIn={() => animateTo(0.97)}
+      onPressOut={() => animateTo(1)}
       hitSlop={hitSlop}
       pressRetentionOffset={16}
     >
-      <Animated.View
-        style={[styles.box, pressed && !reduced && styles.pressed]}
-      >
-        {typeof children === "function" ? children(pressed) : children}
-      </Animated.View>
+      {({ pressed }) => (
+        <Animated.View style={{ transform: [{ scale }] }}>
+          {typeof children === "function" ? children(pressed) : children}
+        </Animated.View>
+      )}
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  box: {
-    transform: [{ scale: 1 }],
-    transitionProperty: "transform",
-    transitionDuration: `${DURATION.press}ms`,
-    transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
-  },
-  pressed: {
-    transform: [{ scale: 0.97 }],
-    opacity: 0.85,
-  },
-});

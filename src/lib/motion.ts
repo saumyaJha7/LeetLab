@@ -13,11 +13,13 @@ export const DURATION = {
 
 /**
  * Subtle entrance for containers (never virtualized rows).
- * 12px drift + fade, 250ms ease-out. Stagger via .delay() at call site (30-60ms).
+ * Currently unused — entering animations crashed on Android Fabric
+ * (IllegalViewOperationException via PreAllocateView), so this stays
+ * parked until verified on a release build.
  */
-export const ENTER_SUBTLE = FadeInDown.duration(DURATION.enter)
-  .damping(20)
-  .easing(EASE_OUT);
+export const ENTER_SUBTLE = FadeInDown.duration(DURATION.enter).easing(
+  EASE_OUT
+);
 
 /** List reflow when filters change. Module scope — builders rebuilt in render cost. */
 export const REFLOW_SUBTLE = LinearTransition.duration(DURATION.reflow).easing(

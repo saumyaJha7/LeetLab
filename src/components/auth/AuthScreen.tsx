@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Button, Spinner, useThemeColor } from "heroui-native";
 import { colors, spacing } from "../../theme";
-import { EnteringView, PressableScale } from "../ui";
+import { PressableScale } from "../ui";
 
 export type AuthMessage = {
   type: "error" | "success";
@@ -96,7 +96,7 @@ export function AuthScreen({
           </View>
 
           {/* Headings */}
-          <EnteringView index={0}>
+          <View>
             <View className="mb-2.5 flex-row items-center gap-2">
               <View className="h-1.5 w-1.5 rounded-full bg-accent" />
               <Text
@@ -118,11 +118,10 @@ export function AuthScreen({
             >
               {subtitle}
             </Text>
-          </EnteringView>
+          </View>
 
           {/* Form card */}
-          <EnteringView index={1}>
-            <View className="rounded-2xl border border-border bg-surface p-4">
+          <View className="rounded-2xl border border-border bg-surface p-4">
             <Text
               className="mb-4 text-foreground"
               style={{ fontSize: 15, fontWeight: "700" }}
@@ -143,12 +142,10 @@ export function AuthScreen({
                 <Button.Label>{submitLabel}</Button.Label>
               </Button>
             </View>
-            </View>
-          </EnteringView>
+          </View>
 
           {/* Message banner */}
           {message ? (
-            <EnteringView index={0}>
               <Text
                 accessibilityRole="alert"
                 className={message.type === "error" ? "text-danger" : "text-success"}
@@ -156,7 +153,6 @@ export function AuthScreen({
               >
                 {message.text}
               </Text>
-            </EnteringView>
           ) : null}
 
           {/* Divider */}
