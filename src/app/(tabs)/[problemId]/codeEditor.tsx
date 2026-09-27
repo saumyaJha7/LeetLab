@@ -8,7 +8,10 @@ import {
   View,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, useThemeColor } from "heroui-native";
 import { Screen, EmptyState, LoadingState } from "../../../components/ui";
@@ -18,7 +21,7 @@ import {
   type LanguageOption,
 } from "../../../components/editor";
 import { useProblem } from "../../../hooks/useProblem";
-import { colors } from "../../../theme";
+import { colors, spacing } from "../../../theme";
 
 const FALLBACK_LANGUAGE = "JavaScript";
 
@@ -79,11 +82,16 @@ export default function CodeEditorScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      edges={["top", "bottom", "left", "right"]}
     >
-      <Screen>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={insets.top}
+      >
+        <View style={{ flex: 1, paddingHorizontal: spacing.lg }}>
         {/* Header */}
         <View className="mb-4 flex-row items-center gap-3">
           <Button
@@ -165,13 +173,8 @@ export default function CodeEditorScreen() {
           />
         </View>
 
-        {/* Footer */}
-        <View
-          style={{
-            paddingTop: 14,
-            paddingBottom: Math.max(insets.bottom, 16),
-          }}
-        >
+        {/* Footer — bottom inset comes from SafeAreaView edges */}
+        <View style={{ paddingTop: 14 }}>
           {status ? (
             <Text
               className="mb-2 text-center text-muted"
@@ -198,7 +201,8 @@ export default function CodeEditorScreen() {
             />
           </Button>
         </View>
-      </Screen>
-    </KeyboardAvoidingView>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
