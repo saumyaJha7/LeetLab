@@ -117,6 +117,19 @@ export default function CodeEditorScreen() {
               {problem.title}
             </Text>
           </View>
+          <Button
+            variant="primary"
+            size="sm"
+            accessibilityLabel="Submit solution"
+            onPress={() =>
+              setStatus(
+                code.trim() ? "Draft ready to submit" : "Write some code first"
+              )
+            }
+          >
+            <Button.Label>Submit</Button.Label>
+            <Ionicons name="send" size={14} color={accentForeground} />
+          </Button>
         </View>
 
         {/* Toolbar: language + tags */}
@@ -136,8 +149,10 @@ export default function CodeEditorScreen() {
           </ScrollView>
         </View>
 
-        {/* Editor frame */}
-        <View className="min-h-65 flex-1 overflow-hidden rounded-2xl border border-border bg-surface">
+        {/* Editor frame — no min-height: flex shrinks it when the
+            keyboard opens so the footer stays visible above it.
+            TextInput scrolls internally at small heights. */}
+        <View className="flex-1 overflow-hidden rounded-2xl border border-border bg-surface">
           <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
             <Text
               className="text-foreground"
@@ -173,34 +188,17 @@ export default function CodeEditorScreen() {
           />
         </View>
 
-        {/* Footer — bottom inset comes from SafeAreaView edges */}
-        <View style={{ paddingTop: 14 }}>
-          {status ? (
+        {/* Status line — only renders after a submit attempt */}
+        {status ? (
+          <View style={{ paddingTop: 14 }}>
             <Text
-              className="mb-2 text-center text-muted"
+              className="text-center text-muted"
               style={{ fontSize: 12 }}
             >
               {status}
             </Text>
-          ) : null}
-          <Button
-            variant="primary"
-            size="lg"
-            className="w-full"
-            onPress={() =>
-              setStatus(
-                code.trim() ? "Draft ready to submit" : "Write some code first"
-              )
-            }
-          >
-            <Button.Label>Submit</Button.Label>
-            <Ionicons
-              name="send"
-              size={16}
-              color={accentForeground}
-            />
-          </Button>
-        </View>
+          </View>
+        ) : null}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
