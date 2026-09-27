@@ -12,7 +12,20 @@
           "package_name": "com.saumyajha.LeetLab"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "402769576246-rqs5t8898svif4l8r8sdiv2u5n2sg5gs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saumyajha.LeetLab",
+            "certificate_hash": "fb1dbdde0cb32576e68851dce665da46ff381bd2"
+          }
+        },
+        {
+          "client_id": "402769576246-9rfdg2phas4o8f7j2baisvm28e7r20c1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDCW6M5P3pbUHdhTipBaCi8JygsR68Qyww"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402769576246-9rfdg2phas4o8f7j2baisvm28e7r20c1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
