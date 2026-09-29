@@ -15,7 +15,27 @@ export async function POST(request: Request) {
 
   if (!user) throw new StatusError(401, 'Unauthorized');
 
-  const { problemId, language, sourceCode } = await request.json();
+  let raw: string;
+  try {
+    raw = await request.text();
+  } catch {
+    throw new StatusError(400, 'Could not read request body.');
+  }
+  let body: unknown;
+  try {
+    body = raw ? (JSON.parse(raw) as unknown) : null;
+  } catch {
+    throw new StatusError(400, 'Request body must be valid JSON.');
+  }
+  if (typeof body !== 'object' || body === null) {
+    throw new StatusError(400, 'Request body must be a JSON object.');
+  }
+
+  const { problemId, language, sourceCode } = body as {
+    problemId?: unknown;
+    language?: unknown;
+    sourceCode?: unknown;
+  };
 
   const id = Number(problemId);
   if (!Number.isInteger(id)) {

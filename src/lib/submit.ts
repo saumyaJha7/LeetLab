@@ -64,7 +64,14 @@ export async function submitSolution(params: {
   try {
     payload = JSON.parse(text) as SubmitVerdict;
   } catch {
-    throw new Error(`Submit failed (${res.status}).`);
+    // expo-server error responses are plain text ("Unauthorized", …).
+    // Surface short ones directly instead of a generic status message.
+    const trimmed = text.trim();
+    throw new Error(
+      trimmed && trimmed.length < 200
+        ? trimmed
+        : `Submit failed (${res.status}).`,
+    );
   }
 
   if (!res.ok) {
