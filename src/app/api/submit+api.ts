@@ -13,10 +13,7 @@ import { StatusError } from 'expo-server';
 export async function POST(request: Request) {
   const user = await getUserFromRequest(request);
 
-  if (!user) {
-    const dbg = request.headers.get('Authorization');
-    throw new StatusError(401, `Unauthorized dbg=${JSON.stringify(dbg?.slice(0, 12))}`);
-  }
+  if (!user) throw new StatusError(401, 'Unauthorized');
 
   let raw: string;
   try {
