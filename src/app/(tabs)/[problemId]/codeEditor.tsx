@@ -13,7 +13,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { Button, useThemeColor } from "heroui-native";
+import { Button, Spinner, useThemeColor } from "heroui-native";
 import { Screen, EmptyState, LoadingState } from "../../../components/ui";
 import { ProblemTags } from "../../../components/problems";
 import {
@@ -21,9 +21,11 @@ import {
   type LanguageOption,
 } from "../../../components/editor";
 import { useProblem } from "../../../hooks/useProblem";
+import { isJudgeLanguage } from "../../../lib/judge";
+import { submitSolution, type SubmitVerdict } from "../../../lib/submit";
 import { colors, spacing } from "../../../theme";
 
-const FALLBACK_LANGUAGE = "JavaScript";
+const FALLBACK_LANGUAGE = "javascript";
 
 const monoFont = Platform.select({
   ios: "Menlo",
@@ -42,7 +44,9 @@ export default function CodeEditorScreen() {
     undefined
   );
   const [code, setCode] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [verdict, setVerdict] = useState<SubmitVerdict | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (problem && !selected) {
@@ -78,8 +82,46 @@ export default function CodeEditorScreen() {
   const handleLanguageChange = (next: LanguageOption | undefined) => {
     if (next) {
       setSelected(next);
+      setVerdict(null);
+      setSubmitError(null);
     }
   };
+
+  const handleSubmit = async () => {
+    if (submitting) return;
+    if (!code.trim()) {
+      setSubmitError("Write some code first");
+      return;
+    }
+    const language = selected?.value ?? FALLBACK_LANGUAGE;
+    if (!isJudgeLanguage(language)) {
+      setSubmitError(`"${language}" isn't runnable yet`);
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError(null);
+    setVerdict(null);
+    try {
+      const result = await submitSolution({
+        problemId: problem.problem_id,
+        language,
+        sourceCode: code,
+      });
+      setVerdict(result);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Submit failed. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const verdictColor = !verdict
+    ? colors.muted
+    : verdict.solved
+      ? colors.success
+      : colors.danger;
 
   return (
     <SafeAreaView
@@ -121,13 +163,10 @@ export default function CodeEditorScreen() {
             variant="primary"
             size="sm"
             accessibilityLabel="Submit solution"
-            onPress={() =>
-              setStatus(
-                code.trim() ? "Draft ready to submit" : "Write some code first"
-              )
-            }
+            isDisabled={submitting}
+            onPress={handleSubmit}
           >
-            <Button.Label>Submit</Button.Label>
+            <Button.Label>{submitting ? "Running…" : "Submit"}</Button.Label>
             <Ionicons name="send" size={14} color={accentForeground} />
           </Button>
         </View>
@@ -168,7 +207,8 @@ export default function CodeEditorScreen() {
             value={code}
             onChangeText={(value) => {
               setCode(value);
-              setStatus(null);
+              setVerdict(null);
+              setSubmitError(null);
             }}
             placeholder="Write your solution here…"
             placeholderTextColor={colors.faint}
@@ -188,15 +228,102 @@ export default function CodeEditorScreen() {
           />
         </View>
 
-        {/* Status line — only renders after a submit attempt */}
-        {status ? (
-          <View style={{ paddingTop: 14 }}>
-            <Text
-              className="text-center text-muted"
-              style={{ fontSize: 12 }}
-            >
-              {status}
+        {/* Verdict area — only renders during/after a submit attempt */}
+        {submitting ? (
+          <View
+            style={{ paddingTop: 14 }}
+            className="flex-row items-center justify-center gap-2"
+          >
+            <Spinner color={colors.secondary} />
+            <Text className="text-muted" style={{ fontSize: 12 }}>
+              Running test cases…
             </Text>
+          </View>
+        ) : null}
+
+        {submitError ? (
+          <View className="mt-3 flex-row items-center gap-3 rounded-2xl border border-border bg-surface px-4 py-3">
+            <Ionicons
+              name="alert-circle"
+              size={18}
+              color={colors.danger}
+            />
+            <Text
+              className="flex-1"
+              style={{ fontSize: 13, color: colors.danger }}
+              numberOfLines={2}
+            >
+              {submitError}
+            </Text>
+            <Button variant="secondary" size="sm" onPress={handleSubmit}>
+              <Button.Label>Retry</Button.Label>
+            </Button>
+          </View>
+        ) : null}
+
+        {verdict ? (
+          <View className="mt-3 overflow-hidden rounded-2xl border border-border bg-surface">
+            <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
+              <Text style={{ fontSize: 14, fontWeight: "800", color: verdictColor }}>
+                {verdict.status}
+              </Text>
+              <Text className="text-muted" style={{ fontSize: 12 }}>
+                {verdict.passed}/{verdict.total} passed
+              </Text>
+            </View>
+            <ScrollView style={{ maxHeight: 180 }}>
+              {verdict.results.map((result) => {
+                const passed = result.outcome === "accepted";
+                return (
+                  <View
+                    key={result.index}
+                    className="border-b border-border px-4 py-2.5"
+                  >
+                    <View className="flex-row items-center gap-2">
+                      <Ionicons
+                        name={
+                          passed
+                            ? "checkmark-circle"
+                            : result.outcome === "wrong-answer"
+                              ? "close-circle"
+                              : "alert-circle"
+                        }
+                        size={15}
+                        color={passed ? colors.success : colors.danger}
+                      />
+                      <Text
+                        className="text-foreground"
+                        style={{ fontSize: 13, fontWeight: "600" }}
+                      >
+                        Case {result.index + 1}
+                      </Text>
+                      {result.timeSec != null ? (
+                        <Text
+                          className="ml-auto text-muted"
+                          style={{ fontSize: 12 }}
+                        >
+                          {result.timeSec.toFixed(3)} s
+                        </Text>
+                      ) : null}
+                    </View>
+                    {passed ? null : (
+                      <Text
+                        className="mt-1 text-muted"
+                        style={{
+                          fontSize: 12,
+                          lineHeight: 18,
+                          fontFamily: monoFont,
+                        }}
+                        numberOfLines={3}
+                      >
+                        expected {result.expectedOutput} · got{" "}
+                        {result.actualOutput || result.stderr || "∅"}
+                      </Text>
+                    )}
+                  </View>
+                );
+              })}
+            </ScrollView>
           </View>
         ) : null}
         </View>
