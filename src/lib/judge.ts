@@ -55,26 +55,44 @@ export async function executeOnCodeBox(params: {
 
   if (!token) throw new Error('CODEBOX_API_TOKEN is not configured on the server.');
 
-  const upstream = await fetch(`${baseUrl}/submissions?wait=true`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Auth-Token': token,
-    },
-    body: JSON.stringify({
-      language_id: params.languageId,
-      source_code: params.sourceCode,
-      stdin: params.stdin,
-      expected_output: params.expectedOutput,
-      cpu_time_limit: 5,
-      memory_limit: 256000,
-    }),
-  });
+  let upstream: Response;
+  try {
+    upstream = await fetch(`${baseUrl}/submissions?wait=true`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Auth-Token': token,
+      },
+      body: JSON.stringify({
+        language_id: params.languageId,
+        source_code: params.sourceCode,
+        stdin: params.stdin,
+        expected_output: params.expectedOutput,
+        cpu_time_limit: 5,
+        memory_limit: 256000,
+      }),
+    });
+  } catch (err) {
+    console.error('[judge] CodeBox unreachable:', err);
+    throw new Error('Could not reach the execution service.');
+  }
 
   const text = await upstream.text();
-  if (!upstream.ok) throw new Error(`CodeBox ${upstream.status}: ${text}`);
+  if (!upstream.ok) {
+    // Raw body stays server-side; clients get a stable, non-leaking message.
+    console.error(`[judge] CodeBox ${upstream.status}: ${text.slice(0, 500)}`);
+    throw new Error(stableUpstreamMessage(upstream.status));
+  }
 
   return JSON.parse(text) as CodeBoxResponse;
+}
+
+function stableUpstreamMessage(status: number) {
+  if (status === 401 || status === 403) return 'Execution service authentication failed.';
+  if (status === 422) return 'Execution service rejected the submission.';
+  if (status === 429) return 'Execution service is busy, try again.';
+  if (status >= 500) return 'Execution service is unavailable.';
+  return 'Execution service request failed.';
 }
 
 export function toCaseResult(
