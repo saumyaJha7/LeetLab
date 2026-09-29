@@ -18,6 +18,7 @@ export interface Problem {
   constraints: string[];
   languages: string[];
   acceptance_rate: number;
+  code_snippets: Record<string, string> | null;
 }
 
 export function useProblem(problemId?: string) {
@@ -42,7 +43,7 @@ export function useProblem(problemId?: string) {
       const { data, error: queryError } = await supabase
         .from("problems")
         .select(
-          "problem_id, title, description, tags, examples, hints, constraints, languages, acceptance_rate"
+          "problem_id, title, description, tags, examples, hints, constraints, languages, acceptance_rate, code_snippets"
         )
         .eq("problem_id", problemId)
         .single();

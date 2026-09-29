@@ -48,10 +48,15 @@ export default function CodeEditorScreen() {
   const [verdict, setVerdict] = useState<SubmitVerdict | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  /** Starter code for a language — "" when the problem ships none. */
+  const snippetFor = (language: string | undefined) =>
+    (language && problem?.code_snippets?.[language]) || "";
+
   useEffect(() => {
     if (problem && !selected) {
       const first = problem.languages?.[0] ?? FALLBACK_LANGUAGE;
       setSelected({ value: first, label: first });
+      setCode(problem.code_snippets?.[first] || "");
     }
   }, [problem, selected]);
 
@@ -81,6 +86,14 @@ export default function CodeEditorScreen() {
 
   const handleLanguageChange = (next: LanguageOption | undefined) => {
     if (next) {
+      // Swap in the new language's starter code only when the user
+      // hasn't typed anything of their own (empty or untouched snippet).
+      setCode((prev) => {
+        if (!prev.trim() || prev === snippetFor(selected?.value)) {
+          return snippetFor(next.value);
+        }
+        return prev;
+      });
       setSelected(next);
       setVerdict(null);
       setSubmitError(null);
