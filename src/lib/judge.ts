@@ -44,6 +44,15 @@ export function parseTestCases(raw: unknown): ProblemTestCase[] {
   return Array.isArray(raw) ? (raw as ProblemTestCase[]) : [];
 }
 
+export function getCodeBoxBaseUrl() {
+  const configured = process.env.CODEBOX_URL?.replace(/\/+$/, '');
+  if (configured) return configured;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('CODEBOX_URL is not configured on the server.');
+  }
+  return 'http://localhost:3000';
+}
+
 export async function executeOnCodeBox(params: {
   languageId: number;
   sourceCode: string;
@@ -51,9 +60,10 @@ export async function executeOnCodeBox(params: {
   expectedOutput: string;
 }) {
   const token = process.env.CODEBOX_API_TOKEN;
-  const baseUrl = (process.env.CODEBOX_URL ?? 'http://localhost:3000').replace(/\/+$/, '');
 
   if (!token) throw new Error('CODEBOX_API_TOKEN is not configured on the server.');
+
+  const baseUrl = getCodeBoxBaseUrl();
 
   let upstream: Response;
   try {
