@@ -32,9 +32,10 @@ export function getSupabaseAdmin() {
 }
 
 export async function getUserFromRequest(request: Request) {
+  // Scheme match is case-insensitive per RFC 7235; trim guards "Bearer  <token>".
   const token = request.headers
     .get('Authorization')
-    ?.replace('Bearer ', '')
+    ?.replace(/^Bearer\s+/i, '')
     .trim();
 
   if (!token) return null;
