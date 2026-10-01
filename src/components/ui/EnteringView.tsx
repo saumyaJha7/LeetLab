@@ -1,42 +1,31 @@
-import { useMemo, type ReactNode } from "react";
-import { type ViewStyle } from "react-native";
-import Animated, {
-  FadeInDown,
-  useReducedMotion,
-} from "react-native-reanimated";
-import { DURATION, EASE_OUT } from "../../lib/motion";
+import { type ReactNode } from "react";
+import { View, type ViewStyle } from "react-native";
 
 type EnteringViewProps = {
   children: ReactNode;
-  /** Stagger index — delay = index * 50ms, capped. Keep 30-60ms per item. */
+  /** Stagger index — reserved for future motion, currently unused. */
   index?: number;
   style?: ViewStyle | ViewStyle[];
   className?: string;
 };
 
 /**
- * Subtle mount entrance for containers only (never FlatList rows).
- * Fade + 12px rise, 250ms ease-out. Reduced motion → no translation.
+ * Mount wrapper for containers only (never FlatList rows).
+ *
+ * ANDROID FABRIC SAFETY: Reanimated entering/layout animations crash
+ * Android builds with `IllegalViewOperationException` (PreAllocateView →
+ * scheduleMountItem ← NativeProxy.performOperations ← worklets runloop).
+ * This component therefore renders a plain View on all platforms until
+ * entrance motion is re-verified on a release build.
  */
 export function EnteringView({
   children,
-  index = 0,
   style,
   className,
 }: EnteringViewProps) {
-  const reduced = useReducedMotion();
-
-  const entering = useMemo(() => {
-    if (reduced) return undefined;
-    const delay = Math.min(index, 4) * 50;
-    return FadeInDown.duration(DURATION.enter)
-      .delay(delay)
-      .easing(EASE_OUT);
-  }, [reduced, index]);
-
   return (
-    <Animated.View entering={entering} style={style} className={className}>
+    <View style={style} className={className}>
       {children}
-    </Animated.View>
+    </View>
   );
 }

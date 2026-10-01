@@ -6,10 +6,11 @@ import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "../hooks/useAuth";
 import { colors } from "../theme";
 
-import { useReducedMotion } from "react-native-reanimated";
-
 export default function RootLayout() {
-  const reduced = useReducedMotion();
+  // NOTE: intentionally no useReducedMotion() from Reanimated here.
+  // Pulling the worklets UI runtime into the root layout contributed to
+  // Android Fabric crashes (IllegalViewOperationException). Keep root
+  // animations static until Reanimated is re-verified on release builds.
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -20,17 +21,14 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
               contentStyle: { backgroundColor: colors.background },
-              // Platform push everywhere; fade when reduced motion is on.
-              animation: reduced ? "fade" : "default",
+              // Peer switches use animation:none below; pushes use platform default.
+              animation: "default",
               animationMatchesGesture: true,
             }}
           >
             {/* Tab group is a peer switch, never a push — no slide. */}
             <Stack.Screen name="(tabs)" options={{ animation: "none" }} />
-            <Stack.Screen
-              name="(auth)"
-              options={{ animation: reduced ? "fade" : "fade" }}
-            />
+            <Stack.Screen name="(auth)" options={{ animation: "fade" }} />
           </Stack>
         </AuthProvider>
       </HeroUINativeProvider>

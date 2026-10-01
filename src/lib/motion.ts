@@ -1,8 +1,10 @@
-import { Easing, FadeInDown, LinearTransition } from "react-native-reanimated";
-
 /** Shared subtle-motion constants. transform + opacity only, always <300ms. */
-export const EASE_OUT = Easing.bezier(0.23, 1, 0.32, 1);
-export const EASE_IN_OUT = Easing.bezier(0.77, 0, 0.175, 1);
+export const EASE_OUT_VALUES: [number, number, number, number] = [
+  0.23, 1, 0.32, 1,
+];
+export const EASE_IN_OUT_VALUES: [number, number, number, number] = [
+  0.77, 0, 0.175, 1,
+];
 
 export const DURATION = {
   press: 120,
@@ -11,17 +13,12 @@ export const DURATION = {
   reflow: 200,
 } as const;
 
-/**
- * Subtle entrance for containers (never virtualized rows).
- * Currently unused — entering animations crashed on Android Fabric
- * (IllegalViewOperationException via PreAllocateView), so this stays
- * parked until verified on a release build.
- */
-export const ENTER_SUBTLE = FadeInDown.duration(DURATION.enter).easing(
-  EASE_OUT
-);
-
-/** List reflow when filters change. Module scope — builders rebuilt in render cost. */
-export const REFLOW_SUBTLE = LinearTransition.duration(DURATION.reflow).easing(
-  EASE_OUT
-);
+// NOTE: Do NOT create FadeInDown / LinearTransition builders at module scope.
+// On Android Fabric (RN 0.83 + Reanimated 4), constructing or attaching
+// entering/layout animations triggers:
+//   IllegalViewOperationException via PreAllocateView
+//   (see FabricUIManager.scheduleMountItem <- NativeProxy.performOperations).
+// Keep this file free of `react-native-reanimated` imports so merely
+// importing motion tokens never starts the worklets UI runtime.
+// If you need entrance motion later, build it lazily inside a
+// `Platform.OS !== 'android'` branch and verify on a release build first.

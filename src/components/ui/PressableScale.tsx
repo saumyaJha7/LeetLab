@@ -1,6 +1,10 @@
-import { useRef, type ReactNode } from "react";
-import { Animated, Easing, Pressable } from "react-native";
-import { useReducedMotion } from "react-native-reanimated";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  AccessibilityInfo,
+  Animated,
+  Easing,
+  Pressable,
+} from "react-native";
 import { DURATION } from "../../lib/motion";
 
 type PressableScaleProps = {
@@ -26,7 +30,11 @@ export function PressableScale({
   hitSlop = 12,
 }: PressableScaleProps) {
   const scale = useRef(new Animated.Value(1)).current;
-  const reduced = useReducedMotion();
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    AccessibilityInfo.isReduceMotionEnabled?.().then(setReduced).catch(() => {});
+  }, []);
 
   const animateTo = (to: number) => {
     if (reduced) {
