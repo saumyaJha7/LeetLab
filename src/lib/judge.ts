@@ -35,6 +35,8 @@ export type ProblemTestCase = { input: string; output: string };
 type CodeBoxResponse = {
   stdout: string | null;
   stderr: string | null;
+  compile_output: string | null;
+  message: string | null;
   status: { id: number; description: string };
   time: string | null;
   memory: number | null;
@@ -120,12 +122,21 @@ export function toCaseResult(
         : 'wrong-answer'
       : 'error';
 
+  // Judge0-compatible servers report compile errors in `compile_output`
+  // (not `stderr`). Without merging, syntax errors surface as empty output
+  // ("got ∅") with no clue. Merge all diagnostic streams so the client
+  // always has something to show on `error`.
+  const diagnostics = [data.stderr, data.compile_output, data.message]
+    .map((part) => normalise(part))
+    .filter(Boolean)
+    .join('\n');
+
   return {
     index,
     input: testCase.input,
     expectedOutput,
     actualOutput,
-    stderr: normalise(data.stderr),
+    stderr: diagnostics,
     status: data.status,
     outcome,
     timeSec: data.time ? Number(data.time) : null,

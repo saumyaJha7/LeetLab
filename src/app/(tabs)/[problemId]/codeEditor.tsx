@@ -22,7 +22,7 @@ import {
 } from "../../../components/editor";
 import { useProblem } from "../../../hooks/useProblem";
 import { isJudgeLanguage } from "../../../lib/judge";
-import { submitSolution, type SubmitVerdict } from "../../../lib/submit";
+import { submitSolution } from "../../../lib/submit";
 import { colors, spacing } from "../../../theme";
 
 const FALLBACK_LANGUAGE = "javascript";
@@ -45,7 +45,6 @@ export default function CodeEditorScreen() {
   );
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [verdict, setVerdict] = useState<SubmitVerdict | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   /** Starter code for a language — "" when the problem ships none. */
@@ -95,7 +94,6 @@ export default function CodeEditorScreen() {
         return prev;
       });
       setSelected(next);
-      setVerdict(null);
       setSubmitError(null);
     }
   };
@@ -113,28 +111,34 @@ export default function CodeEditorScreen() {
     }
     setSubmitting(true);
     setSubmitError(null);
-    setVerdict(null);
     try {
       const result = await submitSolution({
         problemId: problem.problem_id,
         language,
         sourceCode: code,
       });
-      setVerdict(result);
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : "Submit failed. Please try again."
-      );
-    } finally {
       setSubmitting(false);
+      router.push({
+        pathname: "/(tabs)/[problemId]/result",
+        params: {
+          problemId: String(problem.problem_id),
+          verdict: JSON.stringify(result),
+          title: problem.title,
+        },
+      });
+    } catch (err) {
+      setSubmitting(false);
+      router.push({
+        pathname: "/(tabs)/[problemId]/result",
+        params: {
+          problemId: String(problem.problem_id),
+          title: problem.title,
+          submitError:
+            err instanceof Error ? err.message : "Submit failed. Please try again.",
+        },
+      });
     }
   };
-
-  const verdictColor = !verdict
-    ? colors.muted
-    : verdict.solved
-      ? colors.success
-      : colors.danger;
 
   return (
     <SafeAreaView
@@ -220,7 +224,6 @@ export default function CodeEditorScreen() {
             value={code}
             onChangeText={(value) => {
               setCode(value);
-              setVerdict(null);
               setSubmitError(null);
             }}
             placeholder="Write your solution here…"
@@ -274,71 +277,7 @@ export default function CodeEditorScreen() {
           </View>
         ) : null}
 
-        {verdict ? (
-          <View className="mt-3 overflow-hidden rounded-2xl border border-border bg-surface">
-            <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
-              <Text style={{ fontSize: 14, fontWeight: "800", color: verdictColor }}>
-                {verdict.status}
-              </Text>
-              <Text className="text-muted" style={{ fontSize: 12 }}>
-                {verdict.passed}/{verdict.total} passed
-              </Text>
-            </View>
-            <ScrollView style={{ maxHeight: 180 }}>
-              {verdict.results.map((result) => {
-                const passed = result.outcome === "accepted";
-                return (
-                  <View
-                    key={result.index}
-                    className="border-b border-border px-4 py-2.5"
-                  >
-                    <View className="flex-row items-center gap-2">
-                      <Ionicons
-                        name={
-                          passed
-                            ? "checkmark-circle"
-                            : result.outcome === "wrong-answer"
-                              ? "close-circle"
-                              : "alert-circle"
-                        }
-                        size={15}
-                        color={passed ? colors.success : colors.danger}
-                      />
-                      <Text
-                        className="text-foreground"
-                        style={{ fontSize: 13, fontWeight: "600" }}
-                      >
-                        Case {result.index + 1}
-                      </Text>
-                      {result.timeSec != null ? (
-                        <Text
-                          className="ml-auto text-muted"
-                          style={{ fontSize: 12 }}
-                        >
-                          {result.timeSec.toFixed(3)} s
-                        </Text>
-                      ) : null}
-                    </View>
-                    {passed ? null : (
-                      <Text
-                        className="mt-1 text-muted"
-                        style={{
-                          fontSize: 12,
-                          lineHeight: 18,
-                          fontFamily: monoFont,
-                        }}
-                        numberOfLines={3}
-                      >
-                        expected {result.expectedOutput} · got{" "}
-                        {result.actualOutput || result.stderr || "∅"}
-                      </Text>
-                    )}
-                  </View>
-                );
-              })}
-            </ScrollView>
-          </View>
-        ) : null}
+        {/* Verdict now lives on the dedicated result screen. */}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
