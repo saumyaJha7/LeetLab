@@ -59,6 +59,7 @@ export default function TabsLayout() {
       {/* Detail routes — reachable via push, hidden from the tab bar */}
       <Tabs.Screen name="[problemId]/index" options={{ href: null }} />
       <Tabs.Screen name="[problemId]/codeEditor" options={{ href: null }} />
+      <Tabs.Screen name="[problemId]/result" options={{ href: null }} />
     </Tabs>
   );
 }

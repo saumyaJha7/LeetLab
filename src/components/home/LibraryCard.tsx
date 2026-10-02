@@ -1,49 +1,46 @@
 import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Button, Card, Spinner, useThemeColor } from "heroui-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Card } from "heroui-native";
+import { PressableScale } from "../ui";
+import { colors } from "../../theme";
 
 type LibraryCardProps = {
   total: number | null;
   loading: boolean;
 };
 
-/** Library overview card: real problem count + browse CTA. */
+/** Library entry: same row pattern as ProblemRow — tappable, no CTA button. */
 export function LibraryCard({ total, loading }: LibraryCardProps) {
   const router = useRouter();
-  const accentForeground = useThemeColor("accent-foreground");
 
   return (
-    <Card variant="secondary">
+    <Card>
       <Card.Body>
-        <View className="flex-row items-end justify-between">
-          <View className="gap-1">
-            <Card.Title>Problem library</Card.Title>
-            <Card.Description>
-              Hand-picked problems to sharpen your edge
-            </Card.Description>
+        <PressableScale onPress={() => router.push("/(tabs)/problems")}>
+          <View className="flex-row items-center gap-3 py-2">
+            <View className="flex-1 gap-1">
+              <Text
+                className="text-foreground"
+                style={{ fontSize: 16, fontWeight: "600" }}
+                numberOfLines={1}
+              >
+                Problem library
+              </Text>
+              <Text
+                className="text-muted"
+                style={{ fontSize: 13 }}
+                numberOfLines={1}
+              >
+                {loading
+                  ? "Loading problems…"
+                  : `${total ?? "–"} problems to sharpen your edge`}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.muted} />
           </View>
-          {loading ? (
-            <Spinner color={accentForeground} />
-          ) : (
-            <Text
-              className="text-accent"
-              style={{ fontSize: 32, fontWeight: "800" }}
-            >
-              {total ?? "–"}
-            </Text>
-          )}
-        </View>
+        </PressableScale>
       </Card.Body>
-      <Card.Footer>
-        <Button
-          variant="primary"
-          size="lg"
-          className="w-full"
-          onPress={() => router.push("/(tabs)/problems")}
-        >
-          <Button.Label>Browse problems</Button.Label>
-        </Button>
-      </Card.Footer>
     </Card>
   );
 }
