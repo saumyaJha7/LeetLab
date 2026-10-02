@@ -9,13 +9,20 @@
 -- can be re-fetched via GET /submissions/:token) live in `results` jsonb.
 -- Inserts are done server-side with service_role (bypasses RLS);
 -- clients can only read their own rows.
+--
+-- NOTE: a `submissions` table was previously created via Studio with a
+-- per-test-case shape (submission_token PK, no passed/total/results).
+-- It holds no rows, so it is replaced here with the one-row-per-submit
+-- shape. The `language` enum (public.language_type) is reused as-is.
 
-create table if not exists public.submissions (
+drop table if exists public.submissions;
+
+create table public.submissions (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users (id) on delete cascade,
-  problem_id integer not null references public.problems (problem_id) on delete cascade,
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  problem_id bigint not null references public.problems (problem_id) on delete cascade,
   source_code text not null,
-  language text not null,
+  language public.language_type not null,
   status text not null check (status in ('accepted', 'partial', 'failed')),
   passed integer not null default 0,
   total integer not null default 0,
