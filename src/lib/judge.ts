@@ -28,11 +28,15 @@ export type CaseResult = {
   outcome: RunOutcome;
   timeSec: number | null;
   memoryKb: number | null;
+  token: string | null;
+  createdAt: string | null;
+  finishedAt: string | null;
 };
 
 export type ProblemTestCase = { input: string; output: string };
 
 type CodeBoxResponse = {
+  token: string | null;
   stdout: string | null;
   stderr: string | null;
   compile_output: string | null;
@@ -40,6 +44,8 @@ type CodeBoxResponse = {
   status: { id: number; description: string };
   time: string | null;
   memory: number | null;
+  created_at: string | null;
+  finished_at: string | null;
 };
 
 export function parseTestCases(raw: unknown): ProblemTestCase[] {
@@ -141,6 +147,9 @@ export function toCaseResult(
     outcome,
     timeSec: data.time ? Number(data.time) : null,
     memoryKb: data.memory ?? null,
+    token: data.token ?? null,
+    createdAt: data.created_at ?? null,
+    finishedAt: data.finished_at ?? null,
   };
 }
 
@@ -173,6 +182,9 @@ export async function runAllTestCases(params: {
           outcome: 'error' as const,
           timeSec: null,
           memoryKb: null,
+          token: null,
+          createdAt: null,
+          finishedAt: null,
         };
       }
     }),

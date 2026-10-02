@@ -9,7 +9,8 @@ import { runTaskAsync } from '../../lib/run-task';
 import { getSupabaseAdmin, getUserFromRequest } from '../../lib/supabase-admin';
 import { StatusError } from 'expo-server';
 
-// Baby step: judge and return the verdict only. No submissions history yet.
+// Judge, persist one submissions row per executed test case (best-effort),
+// then return the verdict.
 export async function POST(request: Request) {
   const user = await getUserFromRequest(request);
 
@@ -65,6 +66,49 @@ export async function POST(request: Request) {
   );
 
   const status = overallStatus(results);
+
+  // Persist one history row per submit. Best-effort: a DB failure must
+  // not fail the verdict.
+  const passedCount = results.filter((r) => r.outcome === 'accepted').length;
+  const aggregateStatus =
+    passedCount === results.length
+      ? 'accepted'
+      : passedCount === 0
+        ? 'failed'
+        : 'partial';
+  const maxTime = results.reduce<number | null>(
+    (max, r) => (r.timeSec != null ? Math.max(max ?? r.timeSec, r.timeSec) : max),
+    null,
+  );
+  const maxMemory = results.reduce<number | null>(
+    (max, r) =>
+      r.memoryKb != null ? Math.max(max ?? r.memoryKb, r.memoryKb) : max,
+    null,
+  );
+
+  try {
+    const { error: insertError } = await admin.from('submissions').insert({
+      user_id: user.id,
+      problem_id: id,
+      source_code: sourceCode,
+      language,
+      status: aggregateStatus,
+      passed: passedCount,
+      total: results.length,
+      runtime: maxTime != null ? String(maxTime) : null,
+      memory: maxMemory != null ? String(maxMemory) : null,
+      results,
+      finished_at: new Date().toISOString(),
+    });
+    if (insertError) {
+      console.error('[submit] submissions insert failed:', insertError.message);
+    }
+  } catch (err) {
+    console.error(
+      '[submit] submissions insert failed:',
+      err instanceof Error ? err.message : String(err),
+    );
+  }
 
   return Response.json({
     status: outcomeStatusLabel(status),
