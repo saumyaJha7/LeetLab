@@ -1,5 +1,5 @@
-import { ScrollView, Text, View } from "react-native";
-import { Screen, LoadingState } from "../../components/ui";
+import { ScrollView, View } from "react-native";
+import { Screen, LoadingState, ScreenHeader } from "../../components/ui";
 import {
   AccountDetails,
   ProfileHeader,
@@ -35,17 +35,7 @@ export default function ProfileScreen() {
         contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="mb-6">
-          <Text
-            className="text-foreground"
-            style={{ fontSize: 24, fontWeight: "800" }}
-          >
-            Profile
-          </Text>
-          <Text className="mt-1 text-muted" style={{ fontSize: 14 }}>
-            Manage your account
-          </Text>
-        </View>
+        <ScreenHeader title="Profile" subtitle="Manage your account" />
 
         {loading ? (
           <LoadingState label="Loading profile…" />

@@ -3,17 +3,19 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Text,
   View,
 } from "react-native";
-import { Button, Spinner, useThemeColor } from "heroui-native";
-import { colors, spacing } from "../../theme";
-import { PressableScale } from "../ui";
+import { spacing } from "../../theme";
+import { AuthBrand } from "./AuthBrand";
+import { AuthDivider } from "./AuthDivider";
+import { AuthFooter } from "./AuthFooter";
+import { AuthFormCard } from "./AuthFormCard";
+import { AuthHeadings } from "./AuthHeadings";
+import { AuthMessageBanner } from "./AuthMessageBanner";
+import { GoogleSignInButton } from "./GoogleSignInButton";
+import type { AuthMessage } from "./authTypes";
 
-export type AuthMessage = {
-  type: "error" | "success";
-  text: string;
-} | null;
+export type { AuthMessage } from "./authTypes";
 
 type AuthScreenProps = {
   eyebrow: string;
@@ -34,7 +36,7 @@ type AuthScreenProps = {
 };
 
 /**
- * Shared shell for login + signup. Owns brand, headings, form card,
+ * Shared shell for login + signup. Composes brand, headings, form card,
  * message banner, divider, Google button and footer — screens only
  * provide their TextFields and submit logic.
  */
@@ -55,7 +57,6 @@ export function AuthScreen({
   footerActionLabel,
   onFooterPress,
 }: AuthScreenProps) {
-  const accentForeground = useThemeColor("accent-foreground");
   const busy = isSubmitting || isGoogleLoading;
 
   return (
@@ -74,133 +75,30 @@ export function AuthScreen({
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Brand */}
-          <View className="mb-10 flex-row items-center gap-2.5">
-            <View className="h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-accent">
-              <Text
-                style={{
-                  color: colors.onPrimary,
-                  fontSize: 20,
-                  fontWeight: "900",
-                }}
-              >
-                L
-              </Text>
-            </View>
-            <Text
-              className="text-foreground"
-              style={{ fontSize: 13, fontWeight: "800", letterSpacing: 2.4 }}
-            >
-              LEETLAB
-            </Text>
-          </View>
-
-          {/* Headings */}
-          <View>
-            <View className="mb-2.5 flex-row items-center gap-2">
-              <View className="h-1.5 w-1.5 rounded-full bg-accent" />
-              <Text
-                className="text-accent"
-                style={{ fontSize: 11, fontWeight: "800", letterSpacing: 1.6 }}
-              >
-                {eyebrow}
-              </Text>
-            </View>
-            <Text
-              className="mb-2.5 text-foreground"
-              style={{ fontSize: 32, fontWeight: "800", lineHeight: 38 }}
-            >
-              {title}
-            </Text>
-            <Text
-              className="mb-6 text-muted"
-              style={{ fontSize: 15, lineHeight: 22 }}
-            >
-              {subtitle}
-            </Text>
-          </View>
-
-          {/* Form card */}
-          <View className="rounded-2xl border border-border bg-surface p-4">
-            <Text
-              className="mb-4 text-foreground"
-              style={{ fontSize: 15, fontWeight: "700" }}
-            >
-              {formTitle}
-            </Text>
-            <View className="gap-4">
-              {children}
-              {belowFields}
-              <Button
-                variant="primary"
-                size="lg"
-                className="w-full"
-                isDisabled={busy}
-                onPress={onSubmit}
-              >
-                {isSubmitting ? <Spinner color={accentForeground} /> : null}
-                <Button.Label>{submitLabel}</Button.Label>
-              </Button>
-            </View>
-          </View>
-
-          {/* Message banner */}
-          {message ? (
-              <Text
-                accessibilityRole="alert"
-                className={message.type === "error" ? "text-danger" : "text-success"}
-                style={{ fontSize: 13, lineHeight: 19, marginTop: 14 }}
-              >
-                {message.text}
-              </Text>
-          ) : null}
-
-          {/* Divider */}
-          <View className="my-6 flex-row items-center gap-3">
-            <View className="h-px flex-1 bg-border" />
-            <Text
-              className="text-muted"
-              style={{ fontSize: 11, fontWeight: "800", letterSpacing: 1 }}
-            >
-              OR
-            </Text>
-            <View className="h-px flex-1 bg-border" />
-          </View>
-
-          {/* Google */}
-          <Button
-            variant="outline"
-            size="lg"
-            className="w-full"
-            isDisabled={busy}
-            onPress={onGooglePress}
+          <AuthBrand />
+          <AuthHeadings eyebrow={eyebrow} title={title} subtitle={subtitle} />
+          <AuthFormCard
+            formTitle={formTitle}
+            belowFields={belowFields}
+            submitLabel={submitLabel}
+            isSubmitting={isSubmitting}
+            busy={busy}
+            onSubmit={onSubmit}
           >
-            {isGoogleLoading ? (
-              <Spinner color={accentForeground} />
-            ) : (
-              <View className="h-6 w-6 items-center justify-center rounded-full bg-white">
-                <Text style={{ color: "#4285F4", fontSize: 14, fontWeight: "900" }}>
-                  G
-                </Text>
-              </View>
-            )}
-            <Button.Label>Continue with Google</Button.Label>
-          </Button>
-
-          {/* Footer */}
-          <View className="mt-6 flex-row items-center justify-center">
-            <Text className="text-muted" style={{ fontSize: 14 }}>
-              {footerPrompt}{" "}
-            </Text>
-            <PressableScale onPress={onFooterPress} hitSlop={8}>
-              <Text
-                className="text-link"
-                style={{ fontSize: 14, fontWeight: "800" }}
-              >
-                {footerActionLabel}
-              </Text>
-            </PressableScale>
-          </View>
+            {children}
+          </AuthFormCard>
+          <AuthMessageBanner message={message} />
+          <AuthDivider />
+          <GoogleSignInButton
+            busy={busy}
+            isGoogleLoading={isGoogleLoading}
+            onPress={onGooglePress}
+          />
+          <AuthFooter
+            prompt={footerPrompt}
+            actionLabel={footerActionLabel}
+            onPress={onFooterPress}
+          />
         </ScrollView>
       </View>
     </KeyboardAvoidingView>

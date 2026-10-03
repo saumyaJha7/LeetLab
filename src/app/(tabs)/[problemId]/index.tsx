@@ -1,4 +1,4 @@
-import { Platform, ScrollView, Text, View } from "react-native";
+import { ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, useThemeColor } from "heroui-native";
@@ -6,16 +6,14 @@ import { Screen, EmptyState, LoadingState } from "../../../components/ui";
 import {
   DetailSection,
   ExampleBlock,
+  HintsList,
+  ConstraintsList,
+  ProblemDescription,
+  ProblemDetailHeader,
   ProblemTags,
+  ProblemTitleBlock,
 } from "../../../components/problems";
 import { useProblem } from "../../../hooks/useProblem";
-import { colors } from "../../../theme";
-
-const monoFont = Platform.select({
-  ios: "Menlo",
-  android: "monospace",
-  default: "monospace",
-});
 
 export default function ProblemDetailScreen() {
   const { problemId } = useLocalSearchParams<{ problemId: string }>();
@@ -50,48 +48,15 @@ export default function ProblemDetailScreen() {
         contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header: neutral back + title */}
-        <View className="mb-5 flex-row items-center gap-3">
-          <Button
-            variant="ghost"
-            isIconOnly
-            accessibilityLabel="Go back"
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back" size={22} color={colors.foreground} />
-          </Button>
-          <Text
-            className="text-foreground"
-            style={{ fontSize: 20, fontWeight: "800" }}
-          >
-            Problem
-          </Text>
-        </View>
+        <ProblemDetailHeader onBack={() => router.back()} />
 
-        {/* Title block */}
-        <View className="mb-5 gap-3">
-          <Text
-            className="text-foreground"
-            style={{ fontSize: 24, fontWeight: "800", lineHeight: 30 }}
-          >
-            {problem.title}
-          </Text>
-          <View className="flex-row flex-wrap items-center gap-2">
-            <ProblemTags tags={problem.tags ?? []} />
-            <Text className="text-muted" style={{ fontSize: 13 }}>
-              {problem.acceptance_rate}% acceptance
-            </Text>
-          </View>
-        </View>
+        <ProblemTitleBlock
+          title={problem.title}
+          tags={problem.tags ?? []}
+          acceptanceRate={problem.acceptance_rate}
+        />
 
-        <DetailSection title="Description">
-          <Text
-            className="text-foreground"
-            style={{ fontSize: 15, lineHeight: 24 }}
-          >
-            {problem.description}
-          </Text>
-        </DetailSection>
+        <ProblemDescription text={problem.description} />
 
         {problem.examples && problem.examples.length > 0 ? (
           <DetailSection title="Examples">
@@ -105,40 +70,8 @@ export default function ProblemDetailScreen() {
           </DetailSection>
         ) : null}
 
-        {problem.hints && problem.hints.length > 0 ? (
-          <DetailSection title="Hints">
-            {problem.hints.map((hint, index) => (
-              <View key={index} className="flex-row items-start gap-2.5">
-                <Ionicons
-                  name="bulb-outline"
-                  size={16}
-                  color={colors.primary}
-                  style={{ marginTop: 3 }}
-                />
-                <Text
-                  className="flex-1 text-muted"
-                  style={{ fontSize: 14, lineHeight: 22 }}
-                >
-                  {hint}
-                </Text>
-              </View>
-            ))}
-          </DetailSection>
-        ) : null}
-
-        {problem.constraints && problem.constraints.length > 0 ? (
-          <DetailSection title="Constraints">
-            {problem.constraints.map((constraint, index) => (
-              <Text
-                key={index}
-                className="text-muted"
-                style={{ fontSize: 14, lineHeight: 22, fontFamily: monoFont }}
-              >
-                • {constraint}
-              </Text>
-            ))}
-          </DetailSection>
-        ) : null}
+        <HintsList hints={problem.hints ?? []} />
+        <ConstraintsList constraints={problem.constraints ?? []} />
 
         {problem.languages && problem.languages.length > 0 ? (
           <DetailSection title="Supported languages">
