@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Card } from "heroui-native";
-import { ErrorState, LoadingState, PressableScale } from "../ui";
+import { ErrorState, LoadingState, SectionTitle } from "../ui";
 import { ProblemRow } from "../problems";
 import type { ProblemSummary } from "../../hooks/useProblemList";
 
@@ -12,7 +12,7 @@ type SuggestedProblemsProps = {
   onRetry: () => void;
 };
 
-/** "Suggested for you" card with tappable problem rows. */
+/** "Start here" card with tappable problem rows. */
 export function SuggestedProblems({
   problems,
   loading,
@@ -23,25 +23,11 @@ export function SuggestedProblems({
 
   return (
     <View className="mb-6">
-      <View className="mb-3 flex-row items-center justify-between">
-        <Text
-          className="text-foreground"
-          style={{ fontSize: 17, fontWeight: "700" }}
-        >
-          Suggested for you
-        </Text>
-        <PressableScale
-          onPress={() => router.push("/(tabs)/problems")}
-          hitSlop={8}
-        >
-          <Text
-            className="text-link"
-            style={{ fontSize: 14, fontWeight: "700" }}
-          >
-            View all
-          </Text>
-        </PressableScale>
-      </View>
+      <SectionTitle
+        title="Start here"
+        actionLabel="View all"
+        onAction={() => router.push("/(tabs)/problems")}
+      />
 
       <Card>
         <Card.Body>

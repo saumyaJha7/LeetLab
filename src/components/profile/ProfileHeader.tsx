@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import { Avatar } from "heroui-native";
+import { displayNameFor } from "../../lib/display-name";
 
 function initialsFor(name: string | null, email: string | null): string {
   const source = name?.trim() || email?.trim() || "?";
@@ -18,7 +19,7 @@ type ProfileHeaderProps = {
 
 /** Avatar + name + email block. */
 export function ProfileHeader({ name, email, avatarUrl }: ProfileHeaderProps) {
-  const displayName = name?.trim() || "Coder";
+  const displayName = displayNameFor(name);
 
   return (
     <View className="mb-6 items-center">

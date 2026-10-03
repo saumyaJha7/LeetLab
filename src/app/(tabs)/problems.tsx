@@ -1,13 +1,24 @@
-import { useMemo, useState } from "react";
-import { FlatList } from "react-native";
+import { useCallback, useMemo, useState } from "react";
+import { FlatList, RefreshControl } from "react-native";
 import { Screen, EmptyState, ErrorState, LoadingState } from "../../components/ui";
 import { ProblemRow, ProblemsHeader } from "../../components/problems";
 import { useProblemList } from "../../hooks/useProblemList";
+import { colors } from "../../theme";
 
 export default function ProblemsScreen() {
   const { problems, loading, error, refetch } = useProblemList();
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
 
   const tags = useMemo(() => {
     const counts = new Map<string, number>();
@@ -36,7 +47,9 @@ export default function ProblemsScreen() {
 
   const isFiltering = query.trim() !== "" || activeTag !== null;
 
-  if (loading) {
+  // While pulling, stale content stays on screen under the
+  // refresh indicator instead of collapsing into loaders.
+  if (loading && !refreshing) {
     return (
       <Screen>
         <LoadingState label="Loading problems…" />
@@ -44,7 +57,9 @@ export default function ProblemsScreen() {
     );
   }
 
-  if (error) {
+  // Full error screen only when there is nothing to show;
+  // a failed pull keeps the stale list in place.
+  if (error && problems.length === 0) {
     return (
       <Screen>
         <ErrorState description={error} onRetry={refetch} />
@@ -96,6 +111,14 @@ export default function ProblemsScreen() {
         contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.muted}
+            colors={[colors.muted]}
+          />
+        }
       />
     </Screen>
   );

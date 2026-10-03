@@ -1,4 +1,5 @@
 import { Text, View } from "react-native";
+import { displayNameFor } from "../../lib/display-name";
 
 function greetingForHour(hour: number): string {
   if (hour < 12) return "Good morning";
@@ -18,7 +19,7 @@ function todayLabel(now: Date): string {
  * Type matches the Problems/Profile screen headers (24/800 + 14 muted). */
 export function HomeHeader({ name }: { name: string | null }) {
   const now = new Date();
-  const displayName = name?.trim() ? name.trim() : "there";
+  const displayName = displayNameFor(name);
 
   return (
     <View className="mb-6">
