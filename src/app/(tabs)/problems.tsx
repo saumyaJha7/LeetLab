@@ -1,24 +1,34 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, RefreshControl } from "react-native";
 import { Screen, EmptyState, ErrorState, LoadingState } from "../../components/ui";
 import { ProblemRow, ProblemsHeader } from "../../components/problems";
-import { useProblemList } from "../../hooks/useProblemList";
+import { useProblemsStore } from "../../stores/useProblemsStore";
 import { colors } from "../../theme";
 
 export default function ProblemsScreen() {
-  const { problems, loading, error, refetch } = useProblemList();
+  const problems = useProblemsStore((s) => s.problems);
+  const initialized = useProblemsStore((s) => s.initialized);
+  const error = useProblemsStore((s) => s.error);
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
+  // The list is shared with home — fetch here only when
+  // entering with an empty cache (cold deep link).
+  useEffect(() => {
+    if (!useProblemsStore.getState().initialized) {
+      void useProblemsStore.getState().fetchProblems();
+    }
+  }, []);
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await refetch();
+      await useProblemsStore.getState().fetchProblems();
     } finally {
       setRefreshing(false);
     }
-  }, [refetch]);
+  }, []);
 
   const tags = useMemo(() => {
     const counts = new Map<string, number>();
@@ -47,9 +57,9 @@ export default function ProblemsScreen() {
 
   const isFiltering = query.trim() !== "" || activeTag !== null;
 
-  // While pulling, stale content stays on screen under the
-  // refresh indicator instead of collapsing into loaders.
-  if (loading && !refreshing) {
+  // Full loader only before the first fetch completes —
+  // pulls keep stale content under the refresh indicator.
+  if (!initialized) {
     return (
       <Screen>
         <LoadingState label="Loading problems…" />
@@ -62,7 +72,10 @@ export default function ProblemsScreen() {
   if (error && problems.length === 0) {
     return (
       <Screen>
-        <ErrorState description={error} onRetry={refetch} />
+        <ErrorState
+          description={error}
+          onRetry={() => useProblemsStore.getState().fetchProblems()}
+        />
       </Screen>
     );
   }

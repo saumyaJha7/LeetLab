@@ -1,10 +1,11 @@
 import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuth } from "../../hooks/useAuth";
+import { useSessionStore } from "../../stores/useSessionStore";
 import { tabBar } from "../../theme";
 
 export default function TabsLayout() {
-  const { session, loading } = useAuth();
+  const session = useSessionStore((s) => s.session);
+  const loading = useSessionStore((s) => s.loading);
 
   if (loading) {
     return null;

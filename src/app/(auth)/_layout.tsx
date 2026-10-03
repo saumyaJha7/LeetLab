@@ -1,8 +1,9 @@
 import { Redirect, Stack } from "expo-router";
-import { useAuth } from "../../hooks/useAuth";
+import { useSessionStore } from "../../stores/useSessionStore";
 
 export default function AuthLayout() {
-  const { session, loading } = useAuth();
+  const session = useSessionStore((s) => s.session);
+  const loading = useSessionStore((s) => s.loading);
 
   if (loading) {
     return null;

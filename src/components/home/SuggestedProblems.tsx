@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Card } from "heroui-native";
 import { ErrorState, LoadingState, SectionTitle } from "../ui";
 import { ProblemRow } from "../problems";
-import type { ProblemSummary } from "../../hooks/useProblemList";
+import type { ProblemSummary } from "../../stores/useProblemsStore";
 
 type SuggestedProblemsProps = {
   problems: ProblemSummary[];

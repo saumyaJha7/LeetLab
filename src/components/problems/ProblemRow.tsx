@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../theme";
 import { PressableScale } from "../ui";
-import type { ProblemSummary } from "../../hooks/useProblemList";
+import type { ProblemSummary } from "../../stores/useProblemsStore";
 
 type ProblemRowProps = {
   problem: ProblemSummary;

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { Screen, LoadingState, ScreenHeader } from "../../components/ui";
 import {
@@ -6,8 +6,8 @@ import {
   ProfileHeader,
   SignOutButton,
 } from "../../components/profile";
-import { useAuth } from "../../hooks/useAuth";
-import { useProfile } from "../../hooks/useProfile";
+import { useSessionStore } from "../../stores/useSessionStore";
+import { useProfileStore } from "../../stores/useProfileStore";
 import { colors } from "../../theme";
 
 function memberSinceLabel(createdAt: string | undefined): string | null {
@@ -25,21 +25,30 @@ function memberSinceLabel(createdAt: string | undefined): string | null {
 }
 
 export default function ProfileScreen() {
-  const { session } = useAuth();
-  const { profile, loading, refetch } = useProfile();
+  const email = useSessionStore((s) => s.session?.user?.email ?? null);
+  const createdAt = useSessionStore((s) => s.session?.user?.created_at);
+  const profile = useProfileStore((s) => s.profile);
+  const initialized = useProfileStore((s) => s.initialized);
   const [refreshing, setRefreshing] = useState(false);
+
+  // The profile is shared with home — fetch here only when
+  // entering with an empty cache (cold deep link).
+  useEffect(() => {
+    if (!useProfileStore.getState().initialized) {
+      void useProfileStore.getState().fetchProfile();
+    }
+  }, []);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await refetch();
+      await useProfileStore.getState().fetchProfile();
     } finally {
       setRefreshing(false);
     }
-  }, [refetch]);
+  }, []);
 
-  const email = session?.user?.email ?? null;
-  const memberSince = memberSinceLabel(session?.user?.created_at);
+  const memberSince = memberSinceLabel(createdAt);
 
   return (
     <Screen>
@@ -57,7 +66,7 @@ export default function ProfileScreen() {
       >
         <ScreenHeader title="Profile" subtitle="Manage your account" />
 
-        {loading && !refreshing ? (
+        {!initialized ? (
           <LoadingState label="Loading profile…" />
         ) : (
           <>
