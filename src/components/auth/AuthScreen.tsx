@@ -5,6 +5,7 @@ import {
   ScrollView,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spacing } from "../../theme";
 import { AuthBrand } from "./AuthBrand";
 import { AuthDivider } from "./AuthDivider";
@@ -58,6 +59,7 @@ export function AuthScreen({
   onFooterPress,
 }: AuthScreenProps) {
   const busy = isSubmitting || isGoogleLoading;
+  const insets = useSafeAreaInsets();
 
   return (
     <KeyboardAvoidingView
@@ -70,7 +72,8 @@ export function AuthScreen({
             flexGrow: 1,
             justifyContent: "center",
             paddingHorizontal: spacing.lg,
-            paddingVertical: spacing.xxl,
+            paddingTop: Math.max(insets.top, spacing.xxl),
+            paddingBottom: Math.max(insets.bottom, spacing.xxl),
           }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}

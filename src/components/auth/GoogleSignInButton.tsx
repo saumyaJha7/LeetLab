@@ -13,7 +13,7 @@ export function GoogleSignInButton({
   isGoogleLoading,
   onPress,
 }: GoogleSignInButtonProps) {
-  const accentForeground = useThemeColor("accent-foreground");
+  const foreground = useThemeColor("foreground");
 
   return (
     <Button
@@ -24,7 +24,7 @@ export function GoogleSignInButton({
       onPress={onPress}
     >
       {isGoogleLoading ? (
-        <Spinner color={accentForeground} />
+        <Spinner color={foreground} />
       ) : (
         <View className="h-6 w-6 items-center justify-center rounded-full bg-white">
           <Text style={{ color: "#4285F4", fontSize: 14, fontWeight: "900" }}>

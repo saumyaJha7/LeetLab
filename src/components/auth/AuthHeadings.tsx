@@ -16,9 +16,11 @@ export function AuthHeadings({ eyebrow, title, subtitle }: AuthHeadingsProps) {
           className="text-accent"
           style={{ fontSize: 11, fontWeight: "800", letterSpacing: 1.6 }}
         >
-          {eyebrow}
+          {eyebrow.toUpperCase()}
         </Text>
       </View>
+      {/* Hero scale (32/800) is intentional — marketing header,
+          not the 24/800 in-app ScreenHeader. Keep the two distinct. */}
       <Text
         className="mb-2.5 text-foreground"
         style={{ fontSize: 32, fontWeight: "800", lineHeight: 38 }}
