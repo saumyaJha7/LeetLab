@@ -104,6 +104,8 @@ export default function SignupScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          autoComplete="email"
+          textContentType="emailAddress"
           editable={!busy}
           value={email}
           onChangeText={setEmail}
@@ -115,6 +117,7 @@ export default function SignupScreen() {
         onChangeText={setPassword}
         placeholder="Create a password"
         editable={!busy}
+        kind="new"
       />
       <PasswordField
         label="Confirm password"
@@ -122,6 +125,7 @@ export default function SignupScreen() {
         onChangeText={setConfirmPassword}
         placeholder="Confirm your password"
         editable={!busy}
+        kind="new"
       />
     </AuthScreen>
   );

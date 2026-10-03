@@ -10,6 +10,9 @@ type PasswordFieldProps = {
   onChangeText: (value: string) => void;
   placeholder: string;
   editable?: boolean;
+  /** Autofill behavior: "current" for login, "new" for signup
+   * (drives OS keychain prompts + strong-password suggestions). */
+  kind?: "current" | "new";
 };
 
 /** Password input with show/hide toggle. */
@@ -19,6 +22,7 @@ export function PasswordField({
   onChangeText,
   placeholder,
   editable = true,
+  kind = "current",
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
 
@@ -34,6 +38,8 @@ export function PasswordField({
           secureTextEntry={!visible}
           autoCapitalize="none"
           autoCorrect={false}
+          autoComplete={kind === "new" ? "new-password" : "current-password"}
+          textContentType={kind === "new" ? "newPassword" : "password"}
           editable={editable}
         />
         <Pressable

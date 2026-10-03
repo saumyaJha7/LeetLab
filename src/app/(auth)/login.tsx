@@ -110,6 +110,8 @@ export default function LoginScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          autoComplete="email"
+          textContentType="emailAddress"
           editable={!busy}
           value={email}
           onChangeText={setEmail}
@@ -121,6 +123,7 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         placeholder="Enter your password"
         editable={!busy}
+        kind="current"
       />
     </AuthScreen>
   );
