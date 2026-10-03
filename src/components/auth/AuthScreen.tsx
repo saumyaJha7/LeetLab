@@ -8,11 +8,11 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spacing } from "../../theme";
 import { AuthBrand } from "./AuthBrand";
-import { AuthDivider } from "./AuthDivider";
+import { AuthFeatures } from "./AuthFeatures";
 import { AuthFooter } from "./AuthFooter";
-import { AuthFormCard } from "./AuthFormCard";
-import { AuthHeadings } from "./AuthHeadings";
+import { AuthHero } from "./AuthHero";
 import { AuthMessageBanner } from "./AuthMessageBanner";
+import { AuthTerms } from "./AuthTerms";
 import { GoogleSignInButton } from "./GoogleSignInButton";
 import type { AuthMessage } from "./authTypes";
 
@@ -20,14 +20,8 @@ export type { AuthMessage } from "./authTypes";
 
 type AuthScreenProps = {
   eyebrow: string;
-  title: string;
-  subtitle: string;
-  formTitle: string;
-  children: ReactNode;
-  belowFields?: ReactNode;
-  submitLabel: string;
-  isSubmitting: boolean;
-  onSubmit: () => void;
+  title: ReactNode;
+  subtitle: ReactNode;
   message: AuthMessage;
   isGoogleLoading: boolean;
   onGooglePress: () => void;
@@ -37,20 +31,14 @@ type AuthScreenProps = {
 };
 
 /**
- * Shared shell for login + signup. Composes brand, headings, form card,
- * message banner, divider, Google button and footer — screens only
- * provide their TextFields and submit logic.
+ * Google-only welcome shell for login + signup. Composes brand, hero,
+ * feature card, Google button, consent caption and footer — screens only
+ * provide copy and the Google press handler.
  */
 export function AuthScreen({
   eyebrow,
   title,
   subtitle,
-  formTitle,
-  children,
-  belowFields,
-  submitLabel,
-  isSubmitting,
-  onSubmit,
   message,
   isGoogleLoading,
   onGooglePress,
@@ -58,7 +46,6 @@ export function AuthScreen({
   footerActionLabel,
   onFooterPress,
 }: AuthScreenProps) {
-  const busy = isSubmitting || isGoogleLoading;
   const insets = useSafeAreaInsets();
 
   return (
@@ -79,24 +66,15 @@ export function AuthScreen({
           showsVerticalScrollIndicator={false}
         >
           <AuthBrand />
-          <AuthHeadings eyebrow={eyebrow} title={title} subtitle={subtitle} />
-          <AuthFormCard
-            formTitle={formTitle}
-            belowFields={belowFields}
-            submitLabel={submitLabel}
-            isSubmitting={isSubmitting}
-            busy={busy}
-            onSubmit={onSubmit}
-          >
-            {children}
-          </AuthFormCard>
-          <AuthMessageBanner message={message} />
-          <AuthDivider />
+          <AuthHero eyebrow={eyebrow} title={title} subtitle={subtitle} />
+          <AuthFeatures />
           <GoogleSignInButton
-            busy={busy}
+            busy={isGoogleLoading}
             isGoogleLoading={isGoogleLoading}
             onPress={onGooglePress}
           />
+          <AuthMessageBanner message={message} />
+          <AuthTerms />
           <AuthFooter
             prompt={footerPrompt}
             actionLabel={footerActionLabel}

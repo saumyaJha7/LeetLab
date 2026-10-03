@@ -1,16 +1,18 @@
+import type { ReactNode } from "react";
 import { Text, View } from "react-native";
 
-type AuthHeadingsProps = {
+type AuthHeroProps = {
   eyebrow: string;
-  title: string;
-  subtitle: string;
+  title: ReactNode;
+  subtitle: ReactNode;
 };
 
-/** Auth headings: eyebrow dot-row + large title + muted subtitle. */
-export function AuthHeadings({ eyebrow, title, subtitle }: AuthHeadingsProps) {
+/** Welcome hero: pill eyebrow, two-line title and subtitle.
+ * Screens compose `title`/`subtitle` with accent-highlighted segments. */
+export function AuthHero({ eyebrow, title, subtitle }: AuthHeroProps) {
   return (
-    <View>
-      <View className="mb-2.5 flex-row items-center gap-2">
+    <View className="mb-6">
+      <View className="mb-4 self-start flex-row items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5">
         <View className="h-1.5 w-1.5 rounded-full bg-accent" />
         <Text
           className="text-accent"
@@ -19,15 +21,13 @@ export function AuthHeadings({ eyebrow, title, subtitle }: AuthHeadingsProps) {
           {eyebrow.toUpperCase()}
         </Text>
       </View>
-      {/* Hero scale (32/800) is intentional — marketing header,
-          not the 24/800 in-app ScreenHeader. Keep the two distinct. */}
       <Text
         className="mb-2.5 text-foreground"
         style={{ fontSize: 32, fontWeight: "800", lineHeight: 38 }}
       >
         {title}
       </Text>
-      <Text className="mb-6 text-muted" style={{ fontSize: 15, lineHeight: 22 }}>
+      <Text className="text-muted" style={{ fontSize: 15, lineHeight: 22 }}>
         {subtitle}
       </Text>
     </View>

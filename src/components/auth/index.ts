@@ -1,10 +1,9 @@
 export { AuthBrand } from "./AuthBrand";
-export { AuthDivider } from "./AuthDivider";
+export { AuthFeatures, type AuthFeature } from "./AuthFeatures";
 export { AuthFooter } from "./AuthFooter";
-export { AuthFormCard } from "./AuthFormCard";
-export { AuthHeadings } from "./AuthHeadings";
+export { AuthHero } from "./AuthHero";
 export { AuthMessageBanner } from "./AuthMessageBanner";
 export { AuthScreen, type AuthMessage } from "./AuthScreen";
+export { AuthTerms } from "./AuthTerms";
 export { GoogleSignInButton } from "./GoogleSignInButton";
-export { PasswordField } from "./PasswordField";
 export type { AuthMessage as AuthMessageType } from "./authTypes";
