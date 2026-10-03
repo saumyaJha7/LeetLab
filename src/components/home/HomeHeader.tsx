@@ -16,8 +16,16 @@ function todayLabel(now: Date): string {
 }
 
 /** Greeting header: date eyebrow + personalised title.
- * Type matches the Problems/Profile screen headers (24/800 + 14 muted). */
-export function HomeHeader({ name }: { name: string | null }) {
+ * Type matches the Problems/Profile screen headers (24/800 + 14 muted).
+ * While the profile loads, a skeleton bar holds the title's place so the
+ * greeting never flashes a fallback name on first paint. */
+export function HomeHeader({
+  name,
+  loading = false,
+}: {
+  name: string | null;
+  loading?: boolean;
+}) {
   const now = new Date();
   const displayName = displayNameFor(name);
 
@@ -32,12 +40,16 @@ export function HomeHeader({ name }: { name: string | null }) {
           {todayLabel(now).toUpperCase()}
         </Text>
       </View>
-      <Text
-        className="mb-2 text-foreground"
-        style={{ fontSize: 24, fontWeight: "800", lineHeight: 30 }}
-      >
-        {greetingForHour(now.getHours())}, {displayName}.
-      </Text>
+      {loading ? (
+        <View className="mb-2 h-[30px] w-3/5 rounded-lg bg-surface-secondary" />
+      ) : (
+        <Text
+          className="mb-2 text-foreground"
+          style={{ fontSize: 24, fontWeight: "800", lineHeight: 30 }}
+        >
+          {greetingForHour(now.getHours())}, {displayName}.
+        </Text>
+      )}
       <Text className="text-muted" style={{ fontSize: 14, lineHeight: 20 }}>
         Let&apos;s solve something today.
       </Text>

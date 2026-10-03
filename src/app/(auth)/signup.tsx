@@ -12,6 +12,7 @@ export default function SignupScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<AuthMessage>(null);
+  const [emailSent, setEmailSent] = useState(false);
   const { isGoogleLoading, signInWithGoogle } = useGoogleAuth();
 
   const handleSignupWithEmail = async () => {
@@ -57,6 +58,9 @@ export default function SignupScreen() {
     }
 
     if (!data.session) {
+      // Confirm-email path: account exists but no session.
+      // Lock the form so a second tap can't fire another sign-up.
+      setEmailSent(true);
       setMessage({
         type: "success",
         text: "Account created. Check your email to confirm your account.",
@@ -79,7 +83,7 @@ export default function SignupScreen() {
     }
   };
 
-  const busy = isLoading || isGoogleLoading;
+  const busy = isLoading || isGoogleLoading || emailSent;
 
   return (
     <AuthScreen

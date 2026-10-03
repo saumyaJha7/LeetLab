@@ -7,7 +7,7 @@ import { useProfile } from "../../hooks/useProfile";
 import { colors } from "../../theme";
 
 export default function HomeScreen() {
-  const { profile } = useProfile();
+  const { profile, loading: profileLoading } = useProfile();
   const { problems, total, loading, error, refetch } = useProblemList(3);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -38,7 +38,7 @@ export default function HomeScreen() {
           />
         }
       >
-        <HomeHeader name={profile?.name ?? null} />
+        <HomeHeader name={profile?.name ?? null} loading={profileLoading} />
         <SuggestedProblems
           problems={problems}
           loading={quietLoading}
