@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Session } from "@supabase/supabase-js";
+import * as SplashScreen from "expo-splash-screen";
 import { supabase } from "../lib/supabase";
 
 type AuthContextValue = {
@@ -48,6 +49,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Release the native splash exactly when the session is known,
+  // so first paint is never a blank guess.
+  useEffect(() => {
+    if (!loading) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [loading]);
 
   return (
     <AuthContext.Provider value={{ session, loading }}>

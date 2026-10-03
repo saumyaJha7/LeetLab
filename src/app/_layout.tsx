@@ -3,8 +3,14 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { HeroUINativeProvider } from "heroui-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
 import { AuthProvider } from "../hooks/useAuth";
 import { colors } from "../theme";
+
+// Hold the native splash until the session is known — AuthProvider
+// hides it once loading resolves. Ignores rejections when a
+// previous reload already prevented auto-hide.
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   // NOTE: intentionally no useReducedMotion() from Reanimated here.
