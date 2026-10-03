@@ -37,11 +37,12 @@
     --accent: #00d09e;
     --accent-foreground: #052e22;
 
-    /* Form fields — 1px visible border (minimal outlined inputs) */
-    --field-background: #1a1d24;
+    /* Form fields — inset wells: darker than the card, 1px visible border */
+    --field-background: #0c0e13;
     --field-foreground: #f3f8ff;
     --field-placeholder: #4a5263;
-    --field-border: #2a2e39;
+    --field-border: #3b4252;
+    --field-border-width: 1px;
 
     /* Status */
     --success: #00d09e;
@@ -91,11 +92,12 @@
     --accent: #00d09e;
     --accent-foreground: #052e22;
 
-    /* Form fields — 1px visible border (minimal outlined inputs) */
-    --field-background: #1a1d24;
+    /* Form fields — inset wells: darker than the card, 1px visible border */
+    --field-background: #0c0e13;
     --field-foreground: #f3f8ff;
     --field-placeholder: #4a5263;
-    --field-border: #2a2e39;
+    --field-border: #3b4252;
+    --field-border-width: 1px;
 
     /* Status */
     --success: #00d09e;

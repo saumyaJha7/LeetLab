@@ -19,6 +19,11 @@ export const colors = {
   /* Lines — 1px only, everywhere */
   border: "#2A2E39",
 
+  /* Form fields — inset wells on top of surface */
+  fieldBackground: "#0C0E13",
+  fieldBorder: "#3B4252",
+  fieldPlaceholder: "#4A5263",
+
   /* Brand: primary Emerald, secondary Sky */
   primary: "#00D09E",
   onPrimary: "#052E22",
