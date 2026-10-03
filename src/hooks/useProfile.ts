@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "./useAuth";
 
@@ -13,41 +13,33 @@ export function useProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchProfile = async () => {
-      const userId = session?.user?.id;
-      if (!userId) {
-        setProfile(null);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("name, avatar_url")
-        .eq("id", userId)
-        .single();
-
-      if (cancelled) return;
-
-      if (error) {
-        console.error("Error fetching profile:", error);
-        setProfile(null);
-      } else {
-        setProfile(data as Profile);
-      }
+  const fetchProfile = useCallback(async () => {
+    const userId = session?.user?.id;
+    if (!userId) {
+      setProfile(null);
       setLoading(false);
-    };
+      return;
+    }
 
-    fetchProfile();
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("name, avatar_url")
+      .eq("id", userId)
+      .single();
 
-    return () => {
-      cancelled = true;
-    };
+    if (error) {
+      console.error("Error fetching profile:", error);
+      setProfile(null);
+    } else {
+      setProfile(data as Profile);
+    }
+    setLoading(false);
   }, [session]);
 
-  return { profile, loading };
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  return { profile, loading, refetch: fetchProfile };
 }

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Text } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, Spinner, useThemeColor } from "heroui-native";
 import { supabase } from "../../lib/supabase";
+import { AuthMessageBanner } from "../auth";
 
 /** Sign-out button with loading + error handling. */
 export function SignOutButton() {
@@ -28,19 +28,13 @@ export function SignOutButton() {
 
   return (
     <>
-      {error ? (
-        <Text
-          accessibilityRole="alert"
-          className="mb-3 text-center text-danger"
-          style={{ fontSize: 13, lineHeight: 19 }}
-        >
-          {error}
-        </Text>
-      ) : null}
+      <AuthMessageBanner
+        message={error ? { type: "error", text: error } : null}
+      />
       <Button
         variant="danger-soft"
         size="lg"
-        className="w-full"
+        className={`w-full rounded-2xl ${error ? "mt-4" : ""}`}
         isDisabled={isSigningOut}
         onPress={handleSignOut}
       >
@@ -49,7 +43,7 @@ export function SignOutButton() {
         ) : (
           <Ionicons name="log-out-outline" size={18} color={dangerForeground} />
         )}
-        <Button.Label>Sign out</Button.Label>
+        <Button.Label className="font-bold">Sign out</Button.Label>
       </Button>
     </>
   );
