@@ -19,7 +19,7 @@ export function GoogleSignInButton({
     <Button
       variant="outline"
       size="lg"
-      className="w-full"
+      className="w-full rounded-2xl bg-surface"
       isDisabled={busy}
       onPress={onPress}
     >
@@ -32,7 +32,7 @@ export function GoogleSignInButton({
           </Text>
         </View>
       )}
-      <Button.Label>Continue with Google</Button.Label>
+      <Button.Label className="font-bold">Continue with Google</Button.Label>
     </Button>
   );
 }

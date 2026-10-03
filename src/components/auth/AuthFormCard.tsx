@@ -36,12 +36,12 @@ export function AuthFormCard({
         <Button
           variant="primary"
           size="lg"
-          className="w-full"
+          className="w-full rounded-2xl"
           isDisabled={busy}
           onPress={onSubmit}
         >
           {isSubmitting ? <Spinner color={accentForeground} /> : null}
-          <Button.Label>{submitLabel}</Button.Label>
+          <Button.Label className="font-bold">{submitLabel}</Button.Label>
         </Button>
       </View>
     </View>
