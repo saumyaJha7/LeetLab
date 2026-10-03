@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Image } from "react-native";
 import { Button, Spinner, useThemeColor } from "heroui-native";
 
 type GoogleSignInButtonProps = {
@@ -7,7 +7,7 @@ type GoogleSignInButtonProps = {
   onPress: () => void;
 };
 
-/** Outline Google button with "G" badge + loading state. */
+/** Outline Google button with the official "G" mark + loading state. */
 export function GoogleSignInButton({
   busy,
   isGoogleLoading,
@@ -26,11 +26,12 @@ export function GoogleSignInButton({
       {isGoogleLoading ? (
         <Spinner color={foreground} />
       ) : (
-        <View className="h-6 w-6 items-center justify-center rounded-full bg-white">
-          <Text style={{ color: "#4285F4", fontSize: 14, fontWeight: "900" }}>
-            G
-          </Text>
-        </View>
+        <Image
+          source={require("../../../assets/images/google-g.png")}
+          style={{ width: 20, height: 20 }}
+          resizeMode="contain"
+          accessibilityIgnoresInvertColors
+        />
       )}
       <Button.Label className="font-bold">Continue with Google</Button.Label>
     </Button>
