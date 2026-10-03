@@ -16,7 +16,7 @@ export function AuthMessageBanner({ message }: { message: AuthMessage }) {
   return (
     <View
       accessibilityRole="alert"
-      className={`mt-4 flex-row items-start gap-2.5 rounded-xl border border-border px-4 py-3 ${
+      className={`mt-4 flex-row items-start gap-2.5 rounded-2xl border border-border px-4 py-3 ${
         isError ? "bg-danger-soft" : "bg-success-soft"
       }`}
     >

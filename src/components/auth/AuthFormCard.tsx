@@ -12,7 +12,7 @@ type AuthFormCardProps = {
   onSubmit: () => void;
 };
 
-/** Form card: bordered surface with title, fields, optional
+/** Form card: HeroUI Card with title, fields, optional
  * below-fields slot and the primary submit button. */
 export function AuthFormCard({
   formTitle,
