@@ -28,11 +28,7 @@ export function SessionBanner() {
               going.
             </Text>
           </View>
-          <Ionicons
-            name="shield-checkmark"
-            size={22}
-            color={colors.primary}
-          />
+          <Ionicons name="shield-checkmark" size={22} color={colors.primary} />
         </View>
       </Card.Body>
     </Card>

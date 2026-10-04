@@ -27,6 +27,9 @@ export default function TabsLayout() {
           backgroundColor: tabBar.background,
           borderTopColor: tabBar.border,
           borderTopWidth: 1,
+          width: "100%",
+          maxWidth: 680,
+          alignSelf: "center",
         },
       }}
     >

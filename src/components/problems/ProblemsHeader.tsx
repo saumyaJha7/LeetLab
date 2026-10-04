@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import { SearchField } from "heroui-native";
+import { fontFamily } from "../../theme";
 import { TagFilterSelect, type TagCount } from "./TagFilterSelect";
 
 type ProblemsHeaderProps = {
@@ -27,14 +28,14 @@ export function ProblemsHeader({
       <View className="mb-4 flex-row items-center justify-between">
         <Text
           className="text-foreground"
-          style={{ fontSize: 24, fontWeight: "800" }}
+          style={{ fontFamily: fontFamily.extraBold, fontSize: 24 }}
         >
           Coding Problems
         </Text>
         <View className="rounded-full border border-border bg-surface px-3 py-1.5">
           <Text
             className="text-accent"
-            style={{ fontSize: 12, fontWeight: "800" }}
+            style={{ fontFamily: fontFamily.extraBold, fontSize: 12 }}
           >
             {countLabel}
           </Text>

@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, Spinner } from "heroui-native";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 type SubmitFeedbackProps = {
   submitting: boolean;
@@ -24,7 +24,10 @@ export function SubmitFeedback({
           className="flex-row items-center justify-center gap-2"
         >
           <Spinner color={colors.secondary} />
-          <Text className="text-muted" style={{ fontSize: 12 }}>
+          <Text
+            className="text-muted"
+            style={{ fontFamily: fontFamily.regular, fontSize: 12 }}
+          >
             Running test cases…
           </Text>
         </View>
@@ -35,7 +38,7 @@ export function SubmitFeedback({
           <Ionicons name="alert-circle" size={18} color={colors.danger} />
           <Text
             className="flex-1"
-            style={{ fontSize: 13, color: colors.danger }}
+            style={{ fontFamily: fontFamily.regular, fontSize: 13, color: colors.danger }}
             numberOfLines={2}
           >
             {submitError}

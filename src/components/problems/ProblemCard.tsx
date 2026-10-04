@@ -5,6 +5,7 @@ import { PressableScale } from "../ui";
 import { DifficultyBadge } from "./DifficultyBadge";
 import { ProblemTags } from "./ProblemTags";
 import type { ProblemSummary } from "../../stores/useProblemsStore";
+import { fontFamily } from "../../theme";
 
 type ProblemCardProps = {
   problem: ProblemSummary;
@@ -22,7 +23,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
         <Card.Body className="gap-2.5">
           <Text
             className="text-foreground"
-            style={{ fontSize: 16, fontWeight: "600" }}
+            style={{ fontFamily: fontFamily.semiBold, fontSize: 16 }}
             numberOfLines={2}
           >
             {problem.title}

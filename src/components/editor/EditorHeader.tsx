@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, useThemeColor } from "heroui-native";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 type EditorHeaderProps = {
   problemTitle: string;
@@ -31,12 +31,15 @@ export function EditorHeader({
         <Ionicons name="arrow-back" size={22} color={colors.foreground} />
       </Button>
       <View className="flex-1">
-        <Text className="text-foreground" style={{ fontSize: 20, fontWeight: "800" }}>
+        <Text
+          className="text-foreground"
+          style={{ fontFamily: fontFamily.extraBold, fontSize: 20 }}
+        >
           Code Editor
         </Text>
         <Text
           className="mt-0.5 text-muted"
-          style={{ fontSize: 13 }}
+          style={{ fontFamily: fontFamily.regular, fontSize: 13 }}
           numberOfLines={1}
         >
           {problemTitle}

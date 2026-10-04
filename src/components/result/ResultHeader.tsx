@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Button } from "heroui-native";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 type ResultHeaderProps = {
   problemTitle?: string | null;
@@ -22,13 +22,16 @@ export function ResultHeader({ problemTitle, onBack }: ResultHeaderProps) {
         <Ionicons name="arrow-back" size={22} color={colors.foreground} />
       </Button>
       <View className="flex-1">
-        <Text className="text-foreground" style={{ fontSize: 20, fontWeight: "800" }}>
+        <Text
+          className="text-foreground"
+          style={{ fontFamily: fontFamily.extraBold, fontSize: 20 }}
+        >
           Result
         </Text>
         {problemTitle ? (
           <Text
             className="mt-0.5 text-muted"
-            style={{ fontSize: 13 }}
+            style={{ fontFamily: fontFamily.regular, fontSize: 13 }}
             numberOfLines={1}
           >
             {problemTitle}

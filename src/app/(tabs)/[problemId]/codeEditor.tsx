@@ -140,7 +140,15 @@ export default function CodeEditorScreen() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={insets.top}
       >
-        <View style={{ flex: 1, paddingHorizontal: spacing.lg }}>
+        <View
+          style={{
+            flex: 1,
+            width: "100%",
+            maxWidth: 960,
+            alignSelf: "center",
+            paddingHorizontal: spacing.lg,
+          }}
+        >
           <EditorHeader
             problemTitle={problem.title}
             submitting={submitting}

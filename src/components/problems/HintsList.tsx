@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DetailSection } from "./DetailSection";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 type HintsListProps = {
   hints: string[];
@@ -27,7 +27,7 @@ export function HintsList({ hints }: HintsListProps) {
           />
           <Text
             className="flex-1 text-muted"
-            style={{ fontSize: 14, lineHeight: 22 }}
+            style={{ fontFamily: fontFamily.regular, fontSize: 14, lineHeight: 22 }}
           >
             {hint}
           </Text>

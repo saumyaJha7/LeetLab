@@ -8,7 +8,6 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spacing } from "../../theme";
 import { AuthBrand } from "./AuthBrand";
-import { AuthFeatures } from "./AuthFeatures";
 import { AuthFooter } from "./AuthFooter";
 import { AuthHero } from "./AuthHero";
 import { AuthMessageBanner } from "./AuthMessageBanner";
@@ -32,7 +31,7 @@ type AuthScreenProps = {
 
 /**
  * Google-only welcome shell for login + signup. Composes brand, hero,
- * feature card, Google button, consent caption and footer — screens only
+ * Google button, consent caption and footer — screens only
  * provide copy and the Google press handler.
  */
 export function AuthScreen({
@@ -65,21 +64,22 @@ export function AuthScreen({
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <AuthBrand />
-          <AuthHero eyebrow={eyebrow} title={title} subtitle={subtitle} />
-          <AuthFeatures />
-          <GoogleSignInButton
-            busy={isGoogleLoading}
-            isGoogleLoading={isGoogleLoading}
-            onPress={onGooglePress}
-          />
-          <AuthMessageBanner message={message} />
-          <AuthTerms />
-          <AuthFooter
-            prompt={footerPrompt}
-            actionLabel={footerActionLabel}
-            onPress={onFooterPress}
-          />
+          <View style={{ width: "100%", maxWidth: 480, alignSelf: "center" }}>
+            <AuthBrand />
+            <AuthHero eyebrow={eyebrow} title={title} subtitle={subtitle} />
+            <GoogleSignInButton
+              busy={isGoogleLoading}
+              isGoogleLoading={isGoogleLoading}
+              onPress={onGooglePress}
+            />
+            <AuthMessageBanner message={message} />
+            <AuthTerms />
+            <AuthFooter
+              prompt={footerPrompt}
+              actionLabel={footerActionLabel}
+              onPress={onFooterPress}
+            />
+          </View>
         </ScrollView>
       </View>
     </KeyboardAvoidingView>

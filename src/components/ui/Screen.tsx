@@ -18,10 +18,17 @@ export function Screen({ children, padded = true }: ScreenProps) {
       className="flex-1 bg-background"
       style={{
         paddingTop: insets.top,
-        paddingHorizontal: padded ? spacing.lg : 0,
       }}
     >
-      {children}
+      <View
+        className="w-full flex-1 self-center"
+        style={{
+          maxWidth: 680,
+          paddingHorizontal: padded ? spacing.lg : 0,
+        }}
+      >
+        {children}
+      </View>
     </View>
   );
 }

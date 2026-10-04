@@ -1,4 +1,5 @@
 import { Text, View } from "react-native";
+import { fontFamily } from "../../theme";
 
 type ScreenHeaderProps = {
   title: string;
@@ -11,11 +12,17 @@ type ScreenHeaderProps = {
 export function ScreenHeader({ title, subtitle }: ScreenHeaderProps) {
   return (
     <View className="mb-6">
-      <Text className="text-foreground" style={{ fontSize: 24, fontWeight: "800" }}>
+      <Text
+        className="text-foreground"
+        style={{ fontFamily: fontFamily.extraBold, fontSize: 24 }}
+      >
         {title}
       </Text>
       {subtitle ? (
-        <Text className="mt-1 text-muted" style={{ fontSize: 14 }}>
+        <Text
+          className="mt-1 text-muted"
+          style={{ fontFamily: fontFamily.regular, fontSize: 14 }}
+        >
           {subtitle}
         </Text>
       ) : null}

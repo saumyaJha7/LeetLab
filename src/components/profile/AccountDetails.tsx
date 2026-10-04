@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import { DetailSection } from "../problems";
+import { fontFamily } from "../../theme";
 
 function InfoRow({
   label,
@@ -12,10 +13,16 @@ function InfoRow({
 }) {
   return (
     <View className={`gap-1 py-3 ${showDivider ? "border-b border-border" : ""}`}>
-      <Text className="text-muted" style={{ fontSize: 12, fontWeight: "600" }}>
+      <Text
+        className="text-muted"
+        style={{ fontFamily: fontFamily.semiBold, fontSize: 12 }}
+      >
         {label.toUpperCase()}
       </Text>
-      <Text className="text-foreground" style={{ fontSize: 15 }}>
+      <Text
+        className="text-foreground"
+        style={{ fontFamily: fontFamily.regular, fontSize: 15 }}
+      >
         {value}
       </Text>
     </View>

@@ -1,7 +1,7 @@
 import { Platform, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { SubmitVerdict } from "../../lib/submit";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 const monoFont = Platform.select({
   ios: "Menlo",
@@ -30,11 +30,17 @@ function CaseRow({ result }: { result: SubmitVerdict["results"][number] }) {
           size={15}
           color={passed ? colors.success : colors.danger}
         />
-        <Text className="text-foreground" style={{ fontSize: 13, fontWeight: "600" }}>
+        <Text
+          className="text-foreground"
+          style={{ fontFamily: fontFamily.semiBold, fontSize: 13 }}
+        >
           Case {result.index + 1}
         </Text>
         {result.timeSec != null ? (
-          <Text className="ml-auto text-muted" style={{ fontSize: 12 }}>
+          <Text
+            className="ml-auto text-muted"
+            style={{ fontFamily: fontFamily.regular, fontSize: 12 }}
+          >
             {result.timeSec.toFixed(3)} s
           </Text>
         ) : null}

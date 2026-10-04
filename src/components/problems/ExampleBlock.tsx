@@ -1,5 +1,6 @@
 import { Platform, Text, View } from "react-native";
 import type { Example } from "../../hooks/useProblem";
+import { fontFamily } from "../../theme";
 
 const monoFont = Platform.select({
   ios: "Menlo",
@@ -13,7 +14,7 @@ function ExampleLine({ label, value }: { label: string; value: string }) {
       className="text-foreground"
       style={{ fontSize: 14, lineHeight: 22 }}
     >
-      <Text className="text-muted" style={{ fontWeight: "700" }}>
+      <Text className="text-muted" style={{ fontFamily: fontFamily.bold }}>
         {label}:{" "}
       </Text>
       <Text style={{ fontFamily: monoFont }}>{value}</Text>
@@ -33,7 +34,7 @@ export function ExampleBlock({
     <View className="gap-1.5 rounded-xl bg-surface-secondary p-3.5">
       <Text
         className="text-foreground"
-        style={{ fontSize: 14, fontWeight: "700" }}
+        style={{ fontFamily: fontFamily.bold, fontSize: 14 }}
       >
         Example {index + 1}
       </Text>

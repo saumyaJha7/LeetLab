@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { difficultyFor, type Difficulty } from "../../lib/difficulty";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 const difficultyColor: Record<Difficulty, string> = {
   Easy: colors.easy,
@@ -26,8 +26,7 @@ export function DifficultyBadge({ acceptanceRate }: DifficultyBadgeProps) {
         style={{
           color,
           fontSize: 11,
-          fontWeight: "800",
-          letterSpacing: 0.8,
+          fontFamily: fontFamily.extraBold,
         }}
       >
         {level.toUpperCase()}

@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { SubmitVerdict } from "../../lib/submit";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 type VerdictCardProps = {
   verdict: SubmitVerdict;
@@ -26,10 +26,19 @@ export function VerdictCard({ verdict }: VerdictCardProps) {
           color={verdictColor}
         />
         <View className="flex-1">
-          <Text style={{ fontSize: 18, fontWeight: "800", color: verdictColor }}>
+          <Text
+            style={{
+              fontFamily: fontFamily.extraBold,
+              fontSize: 18,
+              color: verdictColor,
+            }}
+          >
             {verdict.status}
           </Text>
-          <Text className="text-muted" style={{ fontSize: 13 }}>
+          <Text
+            className="text-muted"
+            style={{ fontFamily: fontFamily.regular, fontSize: 13 }}
+          >
             {verdict.passed}/{verdict.total} passed
           </Text>
         </View>

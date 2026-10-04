@@ -1,6 +1,7 @@
 import { Text, View } from "react-native";
 import { Avatar } from "heroui-native";
 import { displayNameFor, initialsFor } from "../../lib/display-name";
+import { fontFamily } from "../../theme";
 
 type ProfileHeaderProps = {
   name: string | null;
@@ -22,12 +23,15 @@ export function ProfileHeader({ name, email, avatarUrl }: ProfileHeaderProps) {
       </Avatar>
       <Text
         className="mt-4 text-foreground"
-        style={{ fontSize: 22, fontWeight: "800" }}
+        style={{ fontFamily: fontFamily.extraBold, fontSize: 22 }}
       >
         {displayName}
       </Text>
       {email ? (
-        <Text className="mt-1 text-muted" style={{ fontSize: 14 }}>
+        <Text
+          className="mt-1 text-muted"
+          style={{ fontFamily: fontFamily.regular, fontSize: 14 }}
+        >
           {email}
         </Text>
       ) : null}

@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import { fontFamily } from "../../theme";
 
 type SectionTitleProps = {
   title: string;
@@ -16,7 +17,7 @@ export function SectionTitle({
     <View className="mb-3 flex-row items-center justify-between">
       <Text
         className="text-foreground"
-        style={{ fontSize: 17, fontWeight: "700" }}
+        style={{ fontFamily: fontFamily.bold, fontSize: 17 }}
       >
         {title}
       </Text>
@@ -31,7 +32,7 @@ export function SectionTitle({
               className="text-link"
               style={{
                 fontSize: 14,
-                fontWeight: "700",
+                fontFamily: fontFamily.bold,
                 opacity: pressed ? 0.7 : 1,
               }}
             >

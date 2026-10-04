@@ -20,7 +20,7 @@ export function AuthHero({ eyebrow, title, subtitle }: AuthHeroProps) {
           style={{
             fontFamily: fontFamily.extraBold,
             fontSize: 11,
-            letterSpacing: 1.6,
+            letterSpacing: 0,
           }}
         >
           {eyebrow.toUpperCase()}
@@ -32,7 +32,7 @@ export function AuthHero({ eyebrow, title, subtitle }: AuthHeroProps) {
           fontFamily: fontFamily.extraBold,
           fontSize: 32,
           lineHeight: 38,
-          letterSpacing: -0.4,
+          letterSpacing: 0,
         }}
       >
         {title}

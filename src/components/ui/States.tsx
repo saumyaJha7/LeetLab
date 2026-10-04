@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import { Button, Spinner, useThemeColor } from "heroui-native";
+import { fontFamily } from "../../theme";
 
 /** Centered loading spinner. */
 export function LoadingState({ label = "Loading…" }: { label?: string }) {
@@ -8,7 +9,10 @@ export function LoadingState({ label = "Loading…" }: { label?: string }) {
   return (
     <View className="items-center justify-center py-10">
       <Spinner color={muted} />
-      <Text className="mt-3 text-muted" style={{ fontSize: 14 }}>
+      <Text
+        className="mt-3 text-muted"
+        style={{ fontFamily: fontFamily.regular, fontSize: 14 }}
+      >
         {label}
       </Text>
     </View>
@@ -32,14 +36,14 @@ function MessageState({
     <View className="items-center justify-center px-8 py-10">
       <Text
         className="text-center text-foreground"
-        style={{ fontSize: 16, fontWeight: "700" }}
+        style={{ fontFamily: fontFamily.bold, fontSize: 16 }}
       >
         {title}
       </Text>
       {description ? (
         <Text
           className="mt-2 text-center text-muted"
-          style={{ fontSize: 14, lineHeight: 20 }}
+          style={{ fontFamily: fontFamily.regular, fontSize: 14, lineHeight: 20 }}
         >
           {description}
         </Text>

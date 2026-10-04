@@ -14,7 +14,7 @@ export function AuthBrand() {
         style={{
           fontFamily: fontFamily.bold,
           fontSize: 13,
-          letterSpacing: 2.4,
+          letterSpacing: 0,
         }}
       >
         LEETLAB

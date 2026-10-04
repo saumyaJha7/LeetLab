@@ -1,5 +1,5 @@
 import { Platform, Text, TextInput, View } from "react-native";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 const monoFont = Platform.select({
   ios: "Menlo",
@@ -24,10 +24,16 @@ export function CodeInputFrame({
   return (
     <View className="flex-1 overflow-hidden rounded-2xl border border-border bg-surface">
       <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
-        <Text className="text-foreground" style={{ fontSize: 13, fontWeight: "700" }}>
+        <Text
+          className="text-foreground"
+          style={{ fontFamily: fontFamily.bold, fontSize: 13 }}
+        >
           Solution
         </Text>
-        <Text className="text-muted" style={{ fontSize: 12 }}>
+        <Text
+          className="text-muted"
+          style={{ fontFamily: fontFamily.regular, fontSize: 12 }}
+        >
           {languageLabel}
         </Text>
       </View>

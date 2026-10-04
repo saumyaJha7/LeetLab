@@ -2,6 +2,13 @@
 @import "uniwind";
 @import "heroui-native/styles";
 
+@theme {
+  --font-normal: "Inter_400Regular";
+  --font-medium: "Inter_500Medium";
+  --font-semibold: "Inter_600SemiBold";
+  --font-bold: "Inter_700Bold";
+}
+
 /*
  * LeetLab theme — dark-only lock.
  * The same values are mirrored in BOTH light and dark variants so the UI
