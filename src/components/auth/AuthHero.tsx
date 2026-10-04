@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Text, View } from "react-native";
+import { fontFamily } from "../../theme";
 
 type AuthHeroProps = {
   eyebrow: string;
@@ -16,18 +17,34 @@ export function AuthHero({ eyebrow, title, subtitle }: AuthHeroProps) {
         <View className="h-1.5 w-1.5 rounded-full bg-accent" />
         <Text
           className="text-accent"
-          style={{ fontSize: 11, fontWeight: "800", letterSpacing: 1.6 }}
+          style={{
+            fontFamily: fontFamily.extraBold,
+            fontSize: 11,
+            letterSpacing: 1.6,
+          }}
         >
           {eyebrow.toUpperCase()}
         </Text>
       </View>
       <Text
         className="mb-2.5 text-foreground"
-        style={{ fontSize: 32, fontWeight: "800", lineHeight: 38 }}
+        style={{
+          fontFamily: fontFamily.extraBold,
+          fontSize: 32,
+          lineHeight: 38,
+          letterSpacing: -0.4,
+        }}
       >
         {title}
       </Text>
-      <Text className="text-muted" style={{ fontSize: 15, lineHeight: 22 }}>
+      <Text
+        className="text-muted"
+        style={{
+          fontFamily: fontFamily.regular,
+          fontSize: 15,
+          lineHeight: 22,
+        }}
+      >
         {subtitle}
       </Text>
     </View>

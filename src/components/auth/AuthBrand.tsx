@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 
 /** LeetLab brand row: accent tile with code mark + wordmark. */
 export function AuthBrand() {
@@ -11,7 +11,11 @@ export function AuthBrand() {
       </View>
       <Text
         className="text-foreground"
-        style={{ fontSize: 13, fontWeight: "800", letterSpacing: 2.4 }}
+        style={{
+          fontFamily: fontFamily.bold,
+          fontSize: 13,
+          letterSpacing: 2.4,
+        }}
       >
         LEETLAB
       </Text>

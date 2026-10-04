@@ -5,6 +5,14 @@ import { HeroUINativeProvider } from "heroui-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+} from "@expo-google-fonts/inter";
 import { useSessionStore } from "../stores/useSessionStore";
 import { colors } from "../theme";
 
@@ -24,14 +32,23 @@ export default function RootLayout() {
   }, []);
 
   const sessionLoading = useSessionStore((s) => s.loading);
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+  });
 
-  // Release the native splash exactly when the session is known,
-  // so first paint is never a blank guess.
+  // Release the native splash once the session is known AND type is
+  // ready. fontError counts as ready — a failed font fetch must never
+  // hold the splash (screens fall back to system fonts).
+  const ready = !sessionLoading && (fontsLoaded || !!fontError);
   useEffect(() => {
-    if (!sessionLoading) {
+    if (ready) {
       SplashScreen.hideAsync().catch(() => {});
     }
-  }, [sessionLoading]);
+  }, [ready]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

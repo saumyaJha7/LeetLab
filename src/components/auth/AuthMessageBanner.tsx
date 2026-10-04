@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../../theme";
+import { colors, fontFamily } from "../../theme";
 import type { AuthMessage } from "./authTypes";
 
 /** Status banner below the form card: soft-tinted container with
@@ -28,7 +28,11 @@ export function AuthMessageBanner({ message }: { message: AuthMessage }) {
       />
       <Text
         className="flex-1 text-foreground"
-        style={{ fontSize: 13, lineHeight: 19 }}
+        style={{
+          fontFamily: fontFamily.medium,
+          fontSize: 13,
+          lineHeight: 19,
+        }}
       >
         {message.text}
       </Text>

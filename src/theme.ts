@@ -62,3 +62,16 @@ export const tabBar = {
   active: colors.primary,
   inactive: colors.muted,
 } as const;
+
+/**
+ * Inter faces (loaded in the root layout via @expo-google-fonts/inter).
+ * Use the exact face — never pair with a numeric fontWeight, each file
+ * already is its weight.
+ */
+export const fontFamily = {
+  regular: "Inter_400Regular",
+  medium: "Inter_500Medium",
+  semiBold: "Inter_600SemiBold",
+  bold: "Inter_700Bold",
+  extraBold: "Inter_800ExtraBold",
+} as const;

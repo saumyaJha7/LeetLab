@@ -1,5 +1,6 @@
 import { Image } from "react-native";
 import { Button, Spinner, useThemeColor } from "heroui-native";
+import { fontFamily } from "../../theme";
 
 type GoogleSignInButtonProps = {
   busy: boolean;
@@ -19,7 +20,7 @@ export function GoogleSignInButton({
     <Button
       variant="outline"
       size="lg"
-      className="w-full rounded-2xl bg-surface"
+      className="w-full rounded-2xl border-field-border bg-surface"
       isDisabled={busy}
       onPress={onPress}
     >
@@ -33,7 +34,9 @@ export function GoogleSignInButton({
           accessibilityIgnoresInvertColors
         />
       )}
-      <Button.Label className="font-bold">Continue with Google</Button.Label>
+      <Button.Label style={{ fontFamily: fontFamily.bold }}>
+        Continue with Google
+      </Button.Label>
     </Button>
   );
 }
