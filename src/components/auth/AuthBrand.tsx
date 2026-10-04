@@ -6,7 +6,7 @@ import { colors, fontFamily } from "../../theme";
 export function AuthBrand() {
   return (
     <View className="mb-10 flex-row items-center gap-2.5">
-      <View className="h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-accent">
+      <View className="h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-accent">
         <Ionicons name="code-slash" size={20} color={colors.onPrimary} />
       </View>
       <Text
