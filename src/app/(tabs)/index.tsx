@@ -1,18 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
 import { Screen } from "../../components/ui";
-import { HomeHeader, LibraryCard, SuggestedProblems } from "../../components/home";
+import {
+  HomeBrand,
+  HomeProfileRow,
+  QuickPractice,
+  SessionBanner,
+  WeekStats,
+} from "../../components/home";
 import { useProblemsStore } from "../../stores/useProblemsStore";
 import { useProfileStore } from "../../stores/useProfileStore";
+import { useSessionStore } from "../../stores/useSessionStore";
 import { colors } from "../../theme";
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const email = useSessionStore((s) => s.session?.user?.email ?? null);
   const profile = useProfileStore((s) => s.profile);
   const profileInitialized = useProfileStore((s) => s.initialized);
-  const problems = useProblemsStore((s) => s.problems);
-  const total = useProblemsStore((s) => s.total);
-  const problemsInitialized = useProblemsStore((s) => s.initialized);
-  const problemsError = useProblemsStore((s) => s.error);
   const [refreshing, setRefreshing] = useState(false);
 
   // Shared stores fetch once — top up here only when entering
@@ -21,9 +27,10 @@ export default function HomeScreen() {
     if (!useProblemsStore.getState().initialized) {
       void useProblemsStore.getState().fetchProblems();
     }
+    if (!useProfileStore.getState().initialized) {
+      void useProfileStore.getState().fetchProfile();
+    }
   }, []);
-
-  const topProblems = useMemo(() => problems.slice(0, 3), [problems]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -36,6 +43,16 @@ export default function HomeScreen() {
       setRefreshing(false);
     }
   }, []);
+
+  const goToDailyChallenge = useCallback(() => {
+    const { problems } = useProblemsStore.getState();
+    const daily =
+      problems.find((p) => p.title.toLowerCase().includes("two sum")) ??
+      problems[0];
+    if (daily) {
+      router.push(`/(tabs)/${daily.problem_id}`);
+    }
+  }, [router]);
 
   return (
     <Screen>
@@ -51,14 +68,19 @@ export default function HomeScreen() {
           />
         }
       >
-        <HomeHeader name={profile?.name ?? null} loading={!profileInitialized} />
-        <SuggestedProblems
-          problems={topProblems}
-          loading={!problemsInitialized}
-          error={refreshing ? null : problemsError}
-          onRetry={() => useProblemsStore.getState().fetchProblems()}
+        <HomeBrand />
+        <HomeProfileRow
+          name={profile?.name ?? null}
+          email={email}
+          avatarUrl={profile?.avatar_url ?? null}
+          loading={!profileInitialized}
         />
-        <LibraryCard total={total} loading={!problemsInitialized} />
+        <SessionBanner />
+        <QuickPractice
+          onBrowse={() => router.push("/(tabs)/problems")}
+          onDaily={goToDailyChallenge}
+        />
+        <WeekStats />
       </ScrollView>
     </Screen>
   );

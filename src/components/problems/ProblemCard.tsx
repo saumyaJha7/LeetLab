@@ -10,8 +10,7 @@ type ProblemCardProps = {
   problem: ProblemSummary;
 };
 
-/** Standalone problem card: title + difficulty badge + tag chips.
- * Used by the Problems tab (home keeps the denser ProblemRow). */
+/** Standalone problem card: title + difficulty badge + tag chips. */
 export function ProblemCard({ problem }: ProblemCardProps) {
   const router = useRouter();
 
