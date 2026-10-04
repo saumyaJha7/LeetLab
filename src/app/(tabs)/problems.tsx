@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, RefreshControl } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
 import { Screen, EmptyState, ErrorState, LoadingState } from "../../components/ui";
-import { ProblemRow, ProblemsHeader } from "../../components/problems";
+import { ProblemCard, ProblemsHeader } from "../../components/problems";
 import { useProblemsStore } from "../../stores/useProblemsStore";
 import { colors } from "../../theme";
 
@@ -39,7 +39,7 @@ export default function ProblemsScreen() {
     }
     return [...counts.entries()]
       .sort((a, b) => b[1] - a[1])
-      .map(([tag]) => tag);
+      .map(([tag, count]) => ({ tag, count }));
   }, [problems]);
 
   const filtered = useMemo(() => {
@@ -81,17 +81,16 @@ export default function ProblemsScreen() {
   }
 
   const subtitle = isFiltering
-    ? `${filtered.length} of ${problems.length} problems`
-    : `${problems.length} problems`;
+    ? `${filtered.length} of ${problems.length}`
+    : `${problems.length} total`;
 
   return (
     <Screen>
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.problem_id.toString()}
-        renderItem={({ item, index }) => (
-          <ProblemRow problem={item} showDivider={index < filtered.length - 1} />
-        )}
+        renderItem={({ item }) => <ProblemCard problem={item} />}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         ListHeaderComponent={
           <ProblemsHeader
             query={query}
@@ -99,7 +98,7 @@ export default function ProblemsScreen() {
             tags={tags}
             activeTag={activeTag}
             onTagChange={setActiveTag}
-            subtitle={subtitle}
+            countLabel={subtitle}
           />
         }
         ListEmptyComponent={

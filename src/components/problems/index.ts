@@ -1,11 +1,13 @@
 export { ConstraintsList } from "./ConstraintsList";
 export { DetailSection } from "./DetailSection";
+export { DifficultyBadge } from "./DifficultyBadge";
 export { ExampleBlock } from "./ExampleBlock";
-export { FilterChips } from "./FilterChips";
 export { HintsList } from "./HintsList";
+export { ProblemCard } from "./ProblemCard";
 export { ProblemDetailHeader } from "./ProblemDetailHeader";
 export { ProblemDescription } from "./ProblemDescription";
 export { ProblemRow } from "./ProblemRow";
 export { ProblemTags } from "./ProblemTags";
 export { ProblemTitleBlock } from "./ProblemTitleBlock";
 export { ProblemsHeader } from "./ProblemsHeader";
+export { TagFilterSelect, type TagCount } from "./TagFilterSelect";
