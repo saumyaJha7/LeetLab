@@ -165,7 +165,6 @@ export default function CodeEditorScreen() {
 
           <CodeInputFrame
             code={code}
-            language={selected?.value ?? FALLBACK_LANGUAGE}
             languageLabel={selected?.label ?? FALLBACK_LANGUAGE}
             onCodeChange={(value) => {
               setCode(value);

@@ -11,10 +11,14 @@ export function AuthBrand() {
       </View>
       <Text
         className="text-foreground"
+        numberOfLines={1}
+        allowFontScaling={false}
         style={{
           fontFamily: fontFamily.bold,
           fontSize: 13,
           letterSpacing: 0,
+          flexShrink: 0,
+          paddingRight: 4,
         }}
       >
         LEETLAB
