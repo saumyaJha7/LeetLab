@@ -57,14 +57,21 @@ export function AuthScreen({
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: "center",
-            paddingHorizontal: spacing.lg,
-            paddingTop: Math.max(insets.top, spacing.xxl),
-            paddingBottom: Math.max(insets.bottom, spacing.xxl),
           }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={{ width: "100%", maxWidth: 480, alignSelf: "center" }}>
+          <View
+            style={{
+              flex: 1,
+              width: "100%",
+              maxWidth: 480,
+              alignSelf: "center",
+              paddingHorizontal: spacing.lg,
+              paddingTop: Math.max(insets.top, spacing.xxl),
+              paddingBottom: Math.max(insets.bottom, spacing.xxl),
+            }}
+          >
             <AuthBrand />
             <AuthHero eyebrow={eyebrow} title={title} subtitle={subtitle} />
             <GoogleSignInButton
