@@ -53,7 +53,7 @@ export function parseTestCases(raw: unknown): ProblemTestCase[] {
 }
 
 export function getCodeBoxBaseUrl() {
-  const configured = process.env.CODEBOX_URL?.replace(/\/+$/, '');
+  const configured = process.env.CODEBOX_URL;
   if (configured) return configured;
   if (process.env.NODE_ENV === 'production') {
     throw new Error('CODEBOX_URL is not configured on the server.');
