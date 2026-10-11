@@ -65,9 +65,9 @@ export function AuthScreen({
             style={{
               flex: 1,
               width: "100%",
-              maxWidth: 480,
+              maxWidth: 440,
               alignSelf: "center",
-              paddingHorizontal: spacing.lg,
+              paddingHorizontal: spacing.xl,
               paddingTop: Math.max(insets.top, spacing.xxl),
               paddingBottom: Math.max(insets.bottom, spacing.xxl),
             }}

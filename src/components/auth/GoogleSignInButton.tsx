@@ -14,18 +14,18 @@ export function GoogleSignInButton({
   isGoogleLoading,
   onPress,
 }: GoogleSignInButtonProps) {
-  const foreground = useThemeColor("foreground");
+  const onAccent = useThemeColor("accent-foreground");
 
   return (
     <Button
-      variant="outline"
+      variant="primary"
       size="lg"
-      className="w-full rounded-2xl border-field-border bg-surface"
+      className="w-full rounded-xl"
       isDisabled={busy}
       onPress={onPress}
     >
       {isGoogleLoading ? (
-        <Spinner color={foreground} />
+        <Spinner color={onAccent} />
       ) : (
         <Image
           source={require("../../../assets/images/google-g.png")}
@@ -34,7 +34,7 @@ export function GoogleSignInButton({
           accessibilityIgnoresInvertColors
         />
       )}
-      <Button.Label style={{ fontFamily: fontFamily.bold }}>
+      <Button.Label style={{ fontFamily: fontFamily.semiBold }}>
         Continue with Google
       </Button.Label>
     </Button>

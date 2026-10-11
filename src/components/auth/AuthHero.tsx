@@ -12,13 +12,13 @@ type AuthHeroProps = {
  * Screens compose `title`/`subtitle` with accent-highlighted segments. */
 export function AuthHero({ eyebrow, title, subtitle }: AuthHeroProps) {
   return (
-    <View className="mb-6">
-      <View className="mb-4 self-start flex-row items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5">
+    <View className="mb-7">
+      <View className="mb-3 self-start flex-row items-center gap-2">
         <View className="h-1.5 w-1.5 rounded-full bg-accent" />
         <Text
-          className="text-accent"
+          className="text-muted"
           style={{
-            fontFamily: fontFamily.extraBold,
+            fontFamily: fontFamily.semiBold,
             fontSize: 11,
             letterSpacing: 0,
           }}
@@ -29,9 +29,9 @@ export function AuthHero({ eyebrow, title, subtitle }: AuthHeroProps) {
       <Text
         className="mb-2.5 text-foreground"
         style={{
-          fontFamily: fontFamily.extraBold,
-          fontSize: 32,
-          lineHeight: 38,
+          fontFamily: fontFamily.bold,
+          fontSize: 34,
+          lineHeight: 41,
           letterSpacing: 0,
         }}
       >
@@ -42,7 +42,7 @@ export function AuthHero({ eyebrow, title, subtitle }: AuthHeroProps) {
         style={{
           fontFamily: fontFamily.regular,
           fontSize: 15,
-          lineHeight: 22,
+          lineHeight: 23,
         }}
       >
         {subtitle}

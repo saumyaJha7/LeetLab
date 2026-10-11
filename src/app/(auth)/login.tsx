@@ -31,8 +31,8 @@ export default function LoginScreen() {
       }
       subtitle={
         <>
-          Pick up your <Text className="text-accent">streak</Text>, revisit
-          solutions, and stay consistent.
+          Continue your practice, revisit past solutions, and keep your
+          momentum going.
         </>
       }
       message={message}
