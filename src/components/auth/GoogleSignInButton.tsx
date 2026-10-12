@@ -1,6 +1,6 @@
-import { Image } from "react-native";
-import { Button, Spinner } from "heroui-native";
+import { ActivityIndicator, Image, Text, View } from "react-native";
 import { fontFamily } from "../../theme";
+import { PressableScale } from "../ui";
 
 type GoogleSignInButtonProps = {
   busy: boolean;
@@ -9,39 +9,55 @@ type GoogleSignInButtonProps = {
 };
 
 /** Pill Google button from the sign-in mock: cornflower blue,
- * white "G" mark + loading state. */
+ * white "G" mark + loading state. Custom-built (not HeroUI Button)
+ * so the label can never truncate inside the pill. */
 export function GoogleSignInButton({
   busy,
   isGoogleLoading,
   onPress,
 }: GoogleSignInButtonProps) {
   return (
-    <Button
-      variant="primary"
-      size="lg"
-      className="w-full rounded-full"
-      style={{ backgroundColor: "#5B8DEF" }}
-      isDisabled={busy}
-      onPress={onPress}
+    <PressableScale
+      onPress={busy ? undefined : onPress}
+      hitSlop={8}
+      accessibilityRole="button"
+      accessibilityLabel="Continue with Google"
     >
-      {isGoogleLoading ? (
-        <Spinner color="#FFFFFF" />
-      ) : (
-        <Image
-          source={require("../../../assets/images/google-g.png")}
-          style={{ width: 20, height: 20 }}
-          resizeMode="contain"
-          accessibilityIgnoresInvertColors
-        />
-      )}
-      <Button.Label
+      <View
         style={{
-          fontFamily: fontFamily.semiBold,
-          color: "#FFFFFF",
+          height: 56,
+          borderRadius: 999,
+          backgroundColor: "#5B8DEF",
+          opacity: busy ? 0.7 : 1,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 10,
+          paddingHorizontal: 24,
         }}
       >
-        Continue with Google
-      </Button.Label>
-    </Button>
+        {isGoogleLoading ? (
+          <ActivityIndicator size="small" color="#FFFFFF" />
+        ) : (
+          <Image
+            source={require("../../../assets/images/google-g.png")}
+            style={{ width: 20, height: 20 }}
+            resizeMode="contain"
+            accessibilityIgnoresInvertColors
+          />
+        )}
+        <Text
+          numberOfLines={1}
+          style={{
+            fontFamily: fontFamily.semiBold,
+            fontSize: 16,
+            color: "#FFFFFF",
+            flexShrink: 1,
+          }}
+        >
+          Continue with Google
+        </Text>
+      </View>
+    </PressableScale>
   );
 }
