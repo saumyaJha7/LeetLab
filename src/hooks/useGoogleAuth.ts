@@ -6,8 +6,18 @@ import {
 } from "@react-native-google-signin/google-signin";
 import { supabase } from "../lib/supabase";
 
+const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
+
+if (!WEB_CLIENT_ID) {
+  console.warn(
+    "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID is missing at build time. " +
+      "Google Sign-In will fail with DEVELOPER_ERROR in this build. " +
+      "Set it as an EAS environment variable (or in .env for local dev) and rebuild."
+  );
+}
+
 GoogleSignin.configure({
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  webClientId: WEB_CLIENT_ID,
 });
 
 /**
@@ -69,7 +79,12 @@ export function useGoogleAuth() {
       ) {
         return {
           ok: false,
-          errorMessage: "Google Sign-In is not configured correctly.",
+          // Surface the native message in dev (__DEV__) so the real cause
+          // (SHA-1 mismatch vs missing webClientId) is visible in logs;
+          // keep the generic copy for end users in production builds.
+          errorMessage: __DEV__
+            ? `Google Sign-In misconfigured [${code}]: ${message || "no details"}`
+            : "Google Sign-In is not configured correctly.",
         };
       }
       return {

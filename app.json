@@ -21,7 +21,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.saumyajha.LeetLab"
+      "package": "com.saumyajha.LeetLab",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
