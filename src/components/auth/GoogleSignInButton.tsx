@@ -1,5 +1,5 @@
 import { Image } from "react-native";
-import { Button, Spinner, useThemeColor } from "heroui-native";
+import { Button, Spinner } from "heroui-native";
 import { fontFamily } from "../../theme";
 
 type GoogleSignInButtonProps = {
@@ -8,24 +8,24 @@ type GoogleSignInButtonProps = {
   onPress: () => void;
 };
 
-/** Outline Google button with the official "G" mark + loading state. */
+/** Pill Google button from the sign-in mock: cornflower blue,
+ * white "G" mark + loading state. */
 export function GoogleSignInButton({
   busy,
   isGoogleLoading,
   onPress,
 }: GoogleSignInButtonProps) {
-  const onAccent = useThemeColor("accent-foreground");
-
   return (
     <Button
       variant="primary"
       size="lg"
-      className="w-full rounded-xl"
+      className="w-full rounded-full"
+      style={{ backgroundColor: "#5B8DEF" }}
       isDisabled={busy}
       onPress={onPress}
     >
       {isGoogleLoading ? (
-        <Spinner color={onAccent} />
+        <Spinner color="#FFFFFF" />
       ) : (
         <Image
           source={require("../../../assets/images/google-g.png")}
@@ -34,7 +34,12 @@ export function GoogleSignInButton({
           accessibilityIgnoresInvertColors
         />
       )}
-      <Button.Label style={{ fontFamily: fontFamily.semiBold }}>
+      <Button.Label
+        style={{
+          fontFamily: fontFamily.semiBold,
+          color: "#FFFFFF",
+        }}
+      >
         Continue with Google
       </Button.Label>
     </Button>

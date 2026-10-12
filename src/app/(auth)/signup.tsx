@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Text } from "react-native";
 import { router } from "expo-router";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import { AuthScreen, type AuthMessage } from "../../components/auth";
@@ -22,19 +21,7 @@ export default function SignupScreen() {
 
   return (
     <AuthScreen
-      eyebrow="Start your run"
-      title={
-        <>
-          Welcome to{"\n"}
-          <Text className="text-accent">LeetLab.</Text>
-        </>
-      }
-      subtitle={
-        <>
-          Turn daily practice into a sharper{" "}
-          <Text className="text-accent">problem-solving habit.</Text>
-        </>
-      }
+      heading="Create account"
       message={message}
       isGoogleLoading={isGoogleLoading}
       onGooglePress={handleGoogleSignup}

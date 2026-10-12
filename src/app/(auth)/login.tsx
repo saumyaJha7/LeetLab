@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Text } from "react-native";
 import { router } from "expo-router";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import { AuthScreen, type AuthMessage } from "../../components/auth";
@@ -22,24 +21,12 @@ export default function LoginScreen() {
 
   return (
     <AuthScreen
-      eyebrow="Solve smarter"
-      title={
-        <>
-          Welcome back to{"\n"}
-          <Text className="text-accent">LeetLab.</Text>
-        </>
-      }
-      subtitle={
-        <>
-          Continue your practice, revisit past solutions, and keep your
-          momentum going.
-        </>
-      }
+      heading="Sign in"
       message={message}
       isGoogleLoading={isGoogleLoading}
       onGooglePress={handleGoogleLogin}
       footerPrompt="New to LeetLab?"
-      footerActionLabel="Create account"
+      footerActionLabel="Create Account"
       onFooterPress={() => router.replace("/(auth)/signup")}
     />
   );
