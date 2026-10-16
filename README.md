@@ -5,35 +5,17 @@
 **Stack:** Expo SDK 55 · React 19 · TypeScript · Expo Router · HeroUI Native + Tailwind v4 · Zustand · Supabase (Auth + Postgres + RLS) · CodeBox judge · EAS Build
 **Platforms:** Android · iOS · Web
 
----
-
-## Screenshots
-
-> Save your screenshots as below — names must match exactly.
-
-```
-assets/screenshots/home.png      → Home
-assets/screenshots/problems.png  → Problem list
-assets/screenshots/detail.png    → Problem detail
-assets/screenshots/editor.png    → Code editor
-assets/screenshots/profile.png   → Profile
-```
-
 <p align="center">
-  <img src="assets/screenshots/home.png" width="180" alt="Home" />
-  <img src="assets/screenshots/problems.png" width="180" alt="Problems" />
-  <img src="assets/screenshots/detail.png" width="180" alt="Problem detail" />
-  <img src="assets/screenshots/editor.png" width="180" alt="Code editor" />
-  <img src="assets/screenshots/profile.png" width="180" alt="Profile" />
+  <img src="assets/screenshots/home.jpeg" width="180" alt="Home" />
+  <img src="assets/screenshots/problems.jpeg" width="180" alt="Problems" />
+  <img src="assets/screenshots/details.jpeg" width="180" alt="Problem detail" />
+  <img src="assets/screenshots/editor.jpeg" width="180" alt="Code editor" />
+  <img src="assets/screenshots/profile.jpeg" width="180" alt="Profile" />
 </p>
 
-| Screen | What it shows |
-|---|---|
-| Home | Greeting, session banner, quick practice (Browse / Daily / Saved), weekly stats |
-| Problems | Search + tag filters, difficulty badges, pull-to-refresh |
-| Detail | Description, examples, hints, constraints, CTA to editor |
-| Editor | JS / Python / Java switcher, starter code, submit to judge |
-| Profile | Avatar, account info, submission heatmap, sign-out |
+<p align="center">
+  <em>Home · Problems · Detail · Editor · Profile</em>
+</p>
 
 ---
 
