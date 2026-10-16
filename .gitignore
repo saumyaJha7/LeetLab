@@ -1,8 +1,5 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# images
-readMeImages/
-
 # dependencies
 node_modules/
 
@@ -49,3 +46,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+.agents/
+.claude/
