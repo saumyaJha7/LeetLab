@@ -160,6 +160,4 @@ Next: history + real stats → bookmarks → difficulty column → streaks/XP �
 
 Docs: [Expo v55](https://docs.expo.dev/versions/v55.0.0/) · [Expo LLMs](https://docs.expo.dev/llms.txt) · [Router](https://docs.expo.dev/router/introduction/) · [EAS](https://docs.expo.dev/eas/)
 
-## License
 
-No license file yet — add one (e.g. MIT) before publishing.
