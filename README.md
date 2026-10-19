@@ -3,7 +3,7 @@
 > Mobile LeetCode client built with **Expo + React Native + Supabase**. Browse problems, read statements, code in-app, and submit to a server-side judge that runs hidden test cases.
 
 **Stack:** Expo SDK 55 · React 19 · TypeScript · Expo Router · HeroUI Native + Tailwind v4 · Zustand · Supabase (Auth + Postgres + RLS) · CodeBox judge · EAS Build
-**Platforms:** Android · iOS · Web
+**Platforms:** Android · iOS 
 
 <p align="center">
   <img src="assets/screenshots/home.jpeg" width="180" alt="Home" />
