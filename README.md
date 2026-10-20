@@ -58,7 +58,7 @@ App → POST /api/submit (Bearer JWT) → verify user → fetch hidden test_case
 
 ```bash
 bunx expo install
-# or: bun install
+
 ```
 
 ### 2. Configure
